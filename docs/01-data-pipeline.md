@@ -1,8 +1,8 @@
 # 01 — Data Pipeline
 
-**Status:** 🚧 build in progress (steps 1–3 of 4 done: gazetteer, synthesizer, splits; gold set
-next) · **Phase:** 1 · **Depends on:** [00-foundations](00-foundations.md) (the taxonomy) ·
-**Used by:** [02-baselines](02-baselines.md), [03-finetuning](03-finetuning.md), every model after
+**Status:** ✅ done · **Phase:** 1 · **Depends on:** [00-foundations](00-foundations.md) (the
+taxonomy) · **Used by:** [02-baselines](02-baselines.md), [03-finetuning](03-finetuning.md),
+every model after
 
 > This document is the *design* for Phase 1. Sections 1–8 are the plan we agree on before writing
 > code; §9 (results) and the confirmed parts of §10 (gotchas) get filled in **after** we build.
@@ -195,10 +195,13 @@ Built with `make data` (seed `20260626`, `noise_level=1.0`, 60 rows/merchant). F
   macro-F1.
 - Sample descriptors: `SQ *STARBUCKS PORTLAND OR`, `WHOLEFDS ATLANTA GA`, `PP*AMZN MKTP US`,
   `DIRECT DEPOSIT REF#520521`, `POS DEBIT WIRE TRANSFER 11/27`.
-- **Gold set:** TBD (step 4).
+- **Gold set:** 120 hand-authored rows (3/subtype, all 40 covered); **48% unseen merchants**, 11
+  credits, 7 flagged edge cases; only 6/120 appear verbatim in train. Committed at `data/gold/`.
+- **Rules-only floor** (weak labeler on gold, no MCC): fires on **50%** of rows at **97%** category
+  & subtype accuracy, but **abstains on the other 50%** — the gap the learned model must close.
 
-Leakage guard, determinism, subtype coverage, and amount-sign correctness are enforced by
-`tests/test_{gazetteer,synthesize,splits,build}.py` (22 tests).
+Leakage guard, determinism, subtype coverage, amount signs, gold validity, and the weak labeler are
+enforced by `tests/test_{gazetteer,synthesize,splits,build,gold,weak_label}.py` (31 tests).
 
 ## 10. Gotchas
 
