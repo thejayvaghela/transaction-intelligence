@@ -1,6 +1,7 @@
 # 03 — Transformer Fine-Tuning (the teacher)
 
-**Status:** 🚧 design spec (awaiting review → then build) · **Phase:** 3
+**Status:** 🚧 build — code complete + CPU-smoke-verified; awaiting the Colab training run for
+results · **Phase:** 3
 **Depends on:** [01-data-pipeline](01-data-pipeline.md) (data), [02-baselines](02-baselines.md)
 (the eval harness + the bar) · **Used by:** [05-distillation](05-distillation.md) (this is the
 teacher), [06-optimization](06-optimization.md), [07-serving](07-serving.md), [09-mlops](09-mlops.md)
@@ -84,7 +85,8 @@ the checkpoint by **val subtype macro-F1**, never gold (gold is touched only for
 
 ## 6. The Colab workflow (train on Colab, serve/dev locally)
 Realizes [ADR 0002](decisions/0002-colab-local-split.md). The training logic lives in
-`src/.../models/finetune.py` as importable functions; the Colab notebook is a thin driver:
+`src/.../models/finetune.py` as importable functions; the ready-to-run notebook
+`notebooks/03_finetune_colab.ipynb` (open it in Colab via the **GitHub** tab) is a thin driver:
 1. `git clone` the repo, `pip install -e .` → identical code to local.
 2. Mount Google Drive (checkpoints) and configure S3 creds (promoted artifacts).
 3. Call `train_transformer(config)`; checkpoints stream to Drive (survive disconnects).

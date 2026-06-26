@@ -1,0 +1,11 @@
+# Phase 3 fine-tuning config. See docs/03-finetuning.md.
+
+model_id: distilbert-base-uncased
+max_length: 48
+learning_rate: 3.0e-5
+batch_size: 32
+epochs: 4
+weight_decay: 0.01
+warmup_ratio: 0.1
+seed: 20260626
+output_dir: models/teacher
