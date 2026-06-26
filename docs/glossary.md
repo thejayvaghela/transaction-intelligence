@@ -37,5 +37,20 @@ where the term first appears so you can jump to the full explanation.
   measured by comparing performance on synthetic `test` vs the realistic `gold` set.
   _(see [01-data-pipeline](01-data-pipeline.md))_
 
+- **TF-IDF** — Term Frequency × Inverse Document Frequency: turns text into sparse vectors where
+  tokens common in one example but rare overall score high. _(see [02-baselines](02-baselines.md))_
+- **n-gram (char vs word)** — contiguous runs of N tokens. *Word* n-grams use whole words; *char*
+  n-grams use character sequences and survive truncation (`WHOLEFDS`). _(see [02-baselines](02-baselines.md))_
+- **Logistic regression** — a linear classifier outputting class probabilities; a strong, fast text
+  baseline. _(see [02-baselines](02-baselines.md))_
+- **Precision / recall / F1** — precision = of predicted-X, how many were X; recall = of actual-X,
+  how many we caught; F1 = their harmonic mean. _(see [02-baselines](02-baselines.md))_
+- **Confusion matrix** — a grid of true vs predicted class counts; reveals which classes get mixed
+  up. _(see [02-baselines](02-baselines.md))_
+- **Calibration / ECE** — whether predicted confidence matches actual accuracy; Expected Calibration
+  Error summarizes the gap. Gates the abstention threshold. _(see [02-baselines](02-baselines.md))_
+- **Accuracy@coverage** — accuracy when you only answer on the most-confident fraction (coverage) of
+  inputs; the fair way to compare against an abstaining baseline. _(see [02-baselines](02-baselines.md))_
+
 _More to come as we go: tokenization, logits, transfer learning, distillation temperature, soft
-labels, INT8 quantization, ONNX, calibration, drift / PSI, ..._
+labels, INT8 quantization, ONNX, drift / PSI, ..._
