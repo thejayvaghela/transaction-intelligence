@@ -120,10 +120,26 @@ uv run pytest tests/test_metrics.py tests/test_baseline.py
 | evaluate on test **and** gold | exposes synthetic-to-real gap | test-only (overstates real-world skill) |
 | report ECE + accuracy@coverage | calibration gates the abstention design | top-1 accuracy only |
 
-## 9. Results / metrics
+## 9. Results / metrics (interim — see finding)
 
-_TBD after build: baseline macro-F1 (subtype + category) on test and gold; vs the rules floor
-(50% coverage @ 97%); ECE; accuracy@coverage curve; top confused subtype pairs; the test→gold gap._
+First build exposed a **data-diversity problem, not a model bug**:
+
+| model | test subtype macro-F1 | gold subtype macro-F1 |
+|---|---|---|
+| rules floor | 0.90 | 0.61 |
+| TF-IDF + LogReg | 0.27 | 0.52 |
+
+- Baseline **train accuracy = 1.0** (it fits), but **test = 0.27** on *unseen* merchants (0 merchant
+  overlap — the split is correct).
+- Test accuracy by category splits sharply: brand-name categories near-zero (groceries 0.00,
+  transportation 0.03, food_drink 0.06) vs phrase categories high (transfers 0.77, financial 0.69) —
+  phrase "merchants" share vocabulary across the split; brand names don't.
+
+**Diagnosis:** with only **6 merchants/subtype** and a (correct) per-merchant split, the model trains
+on ~4 brand names per subtype and must classify a *completely unseen* brand — too little merchant
+diversity to learn transferable features. A bigger model (transformer) would hit the same wall.
+**Fix:** expand merchant diversity (LLM-assisted gazetteer expansion, [ADR 0004](decisions/0004-synthetic-first-data.md)),
+then re-run. Harness/baseline code is correct and tested; numbers refresh after the data fix.
 
 ## 10. Gotchas (to confirm after build)
 
