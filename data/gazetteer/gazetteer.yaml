@@ -1,0 +1,462 @@
+# Merchant gazetteer — curated ground truth seeding the descriptor synthesizer.
+#
+# Keyed by namespaced subtype (must exist in transaction_intelligence.taxonomy).
+# Each block declares default `mcc` + `channel`, then a `merchants` list. A merchant is
+# a bare name (synthesizer handles casing/punctuation/surface forms) OR a
+# {name, aliases: [...]} dict when the real-world abbreviation is non-obvious.
+#
+# channel: card_present | online | recurring | financial   (drives descriptor formatting)
+# mcc: null where these items typically arrive via bank feed without an MCC.
+#
+# Expand breadth here if the synthetic-to-real gap (docs/01) reveals coverage holes.
+
+# ---------------- food_drink ----------------
+food_drink/restaurant:
+  mcc: 5812
+  channel: card_present
+  merchants:
+    - "Olive Garden"
+    - "Cheesecake Factory"
+    - "Applebee's"
+    - "Texas Roadhouse"
+    - "Red Lobster"
+    - "Outback Steakhouse"
+
+food_drink/coffee:
+  mcc: 5814
+  channel: card_present
+  merchants:
+    - {name: "Starbucks", aliases: ["SBUX", "STARBUCKS STORE"]}
+    - {name: "Dunkin", aliases: ["DUNKIN DONUTS"]}
+    - "Peet's Coffee"
+    - "Blue Bottle Coffee"
+    - "Philz Coffee"
+    - "Caribou Coffee"
+
+food_drink/fast_food:
+  mcc: 5814
+  channel: card_present
+  merchants:
+    - {name: "McDonald's", aliases: ["MCDONALDS"]}
+    - "Burger King"
+    - "Wendy's"
+    - "Taco Bell"
+    - {name: "Chick-fil-A", aliases: ["CHICKFILA"]}
+    - "Chipotle"
+
+food_drink/bar:
+  mcc: 5813
+  channel: card_present
+  merchants:
+    - "The Tipsy Crow"
+    - "O'Malley's Pub"
+    - "Yard House"
+    - "BJ's Brewhouse"
+    - "The Brass Tap"
+    - "The Local Tavern"
+
+food_drink/delivery:
+  mcc: 5812
+  channel: online
+  merchants:
+    - {name: "DoorDash", aliases: ["DD DOORDASH"]}
+    - "Uber Eats"
+    - "Grubhub"
+    - "Postmates"
+    - "Seamless"
+    - "Caviar"
+
+# ---------------- groceries ----------------
+groceries/supermarket:
+  mcc: 5411
+  channel: card_present
+  merchants:
+    - {name: "Whole Foods", aliases: ["WHOLEFDS", "WHOLE FOODS MKT"]}
+    - "Trader Joe's"
+    - "Safeway"
+    - "Kroger"
+    - "Publix"
+    - "Wegmans"
+
+groceries/convenience:
+  mcc: 5499
+  channel: card_present
+  merchants:
+    - {name: "7-Eleven", aliases: ["7 ELEVEN"]}
+    - "Circle K"
+    - "Wawa"
+    - "Sheetz"
+    - "QuikTrip"
+    - "Cumberland Farms"
+
+groceries/specialty:
+  mcc: 5499
+  channel: card_present
+  merchants:
+    - "Sprouts Farmers Market"
+    - "Total Wine"
+    - "The Spice House"
+    - "Bristol Farms"
+    - "Eataly"
+    - "GNC"
+
+# ---------------- shopping ----------------
+shopping/general_merch:
+  mcc: 5310
+  channel: card_present
+  merchants:
+    - {name: "Walmart", aliases: ["WM SUPERCENTER"]}
+    - "Target"
+    - {name: "Costco", aliases: ["COSTCO WHSE"]}
+    - "Sam's Club"
+    - "Dollar General"
+    - "BJ's Wholesale"
+
+shopping/clothing:
+  mcc: 5651
+  channel: card_present
+  merchants:
+    - "Gap"
+    - "Old Navy"
+    - "H&M"
+    - "Zara"
+    - "Nordstrom"
+    - "Uniqlo"
+
+shopping/electronics:
+  mcc: 5732
+  channel: card_present
+  merchants:
+    - {name: "Best Buy", aliases: ["BESTBUY"]}
+    - "Micro Center"
+    - "B&H Photo"
+    - "GameStop"
+    - "Newegg"
+    - "Apple Store"
+
+shopping/online_marketplace:
+  mcc: 5999
+  channel: online
+  merchants:
+    - {name: "Amazon", aliases: ["AMZN", "AMZN MKTP US", "AMAZON.COM"]}
+    - "eBay"
+    - "Etsy"
+    - "AliExpress"
+    - "Mercari"
+    - "Wish"
+
+# ---------------- transportation ----------------
+transportation/rideshare:
+  mcc: 4121
+  channel: online
+  merchants:
+    - {name: "Uber", aliases: ["UBER TRIP"]}
+    - "Lyft"
+    - "Via"
+    - "Curb"
+    - "Alto"
+    - "Wingz"
+
+transportation/fuel:
+  mcc: 5541
+  channel: card_present
+  merchants:
+    - "Shell"
+    - "Chevron"
+    - {name: "ExxonMobil", aliases: ["EXXON", "MOBIL"]}
+    - "BP"
+    - "Arco"
+    - "Valero"
+
+transportation/transit:
+  mcc: 4111
+  channel: card_present
+  merchants:
+    - "BART"
+    - {name: "MTA", aliases: ["MTA NYCT"]}
+    - "WMATA"
+    - "Caltrain"
+    - "Clipper"
+    - "SEPTA"
+
+transportation/parking_tolls:
+  mcc: 7523
+  channel: card_present
+  merchants:
+    - "SpotHero"
+    - "LAZ Parking"
+    - "FasTrak"
+    - {name: "E-ZPass", aliases: ["EZPASS"]}
+    - "ParkWhiz"
+    - "Premier Parking"
+
+# ---------------- travel ----------------
+travel/airline:
+  mcc: 4511
+  channel: online
+  merchants:
+    - {name: "Delta Air Lines", aliases: ["DELTA"]}
+    - {name: "United Airlines", aliases: ["UNITED"]}
+    - {name: "American Airlines", aliases: ["AMERICAN AIR"]}
+    - "Southwest Airlines"
+    - "JetBlue"
+    - "Alaska Airlines"
+
+travel/lodging:
+  mcc: 7011
+  channel: online
+  merchants:
+    - "Marriott"
+    - "Hilton"
+    - "Hyatt"
+    - "Holiday Inn"
+    - "Airbnb"
+    - "Best Western"
+
+travel/car_rental:
+  mcc: 7512
+  channel: online
+  merchants:
+    - "Hertz"
+    - {name: "Enterprise Rent-A-Car", aliases: ["ENTERPRISE"]}
+    - "Avis"
+    - "Budget"
+    - "National Car Rental"
+    - "Alamo"
+
+# ---------------- bills_utilities ----------------
+bills_utilities/electric_gas:
+  mcc: 4900
+  channel: recurring
+  merchants:
+    - {name: "PG&E", aliases: ["PGANDE"]}
+    - {name: "Con Edison", aliases: ["CONED"]}
+    - "Duke Energy"
+    - "Dominion Energy"
+    - "National Grid"
+    - {name: "Southern California Edison", aliases: ["SCE"]}
+
+bills_utilities/water:
+  mcc: 4900
+  channel: recurring
+  merchants:
+    - "EBMUD"
+    - "SFPUC"
+    - "City of Austin Water"
+    - "DC Water"
+    - "LADWP"
+    - "Aqua America"
+
+bills_utilities/internet_phone:
+  mcc: 4814
+  channel: recurring
+  merchants:
+    - {name: "Comcast", aliases: ["XFINITY"]}
+    - "Verizon"
+    - {name: "AT&T", aliases: ["ATT"]}
+    - {name: "T-Mobile", aliases: ["TMOBILE"]}
+    - "Spectrum"
+    - "CenturyLink"
+
+bills_utilities/insurance:
+  mcc: 6300
+  channel: recurring
+  merchants:
+    - "Geico"
+    - "State Farm"
+    - "Progressive"
+    - "Allstate"
+    - "Liberty Mutual"
+    - "Nationwide"
+
+# ---------------- subscriptions_entertainment ----------------
+subscriptions_entertainment/streaming:
+  mcc: 5815
+  channel: recurring
+  merchants:
+    - "Netflix"
+    - "Spotify"
+    - "Hulu"
+    - {name: "Disney+", aliases: ["DISNEYPLUS"]}
+    - {name: "HBO Max", aliases: ["HBOMAX"]}
+    - "YouTube Premium"
+
+subscriptions_entertainment/gaming:
+  mcc: 5816
+  channel: online
+  merchants:
+    - {name: "Steam", aliases: ["STEAMGAMES"]}
+    - {name: "PlayStation Network", aliases: ["PSN"]}
+    - "Xbox Live"
+    - "Nintendo"
+    - "Epic Games"
+    - "Roblox"
+
+subscriptions_entertainment/events:
+  mcc: 7922
+  channel: online
+  merchants:
+    - "Ticketmaster"
+    - "StubHub"
+    - "Live Nation"
+    - "AXS"
+    - "Eventbrite"
+    - "SeatGeek"
+
+subscriptions_entertainment/software:
+  mcc: 5734
+  channel: recurring
+  merchants:
+    - "Adobe"
+    - "Microsoft"
+    - "Dropbox"
+    - "Notion"
+    - "Slack"
+    - "Zoom"
+
+# ---------------- health_wellness ----------------
+health_wellness/pharmacy:
+  mcc: 5912
+  channel: card_present
+  merchants:
+    - {name: "CVS", aliases: ["CVS PHARMACY"]}
+    - "Walgreens"
+    - "Rite Aid"
+    - "Duane Reade"
+    - "GoodRx"
+    - "Costco Pharmacy"
+
+health_wellness/medical:
+  mcc: 8011
+  channel: card_present
+  merchants:
+    - "Quest Diagnostics"
+    - "LabCorp"
+    - {name: "Kaiser Permanente", aliases: ["KAISER"]}
+    - "One Medical"
+    - "Concentra"
+    - "CityMD"
+
+health_wellness/fitness:
+  mcc: 7997
+  channel: recurring
+  merchants:
+    - "Planet Fitness"
+    - "LA Fitness"
+    - "Equinox"
+    - "24 Hour Fitness"
+    - "Crunch Fitness"
+    - "Orangetheory"
+
+# ---------------- financial (bank-feed; mcc often null) ----------------
+financial/bank_fee:
+  mcc: null
+  channel: financial
+  merchants:
+    - "Monthly Maintenance Fee"
+    - "Overdraft Fee"
+    - "ATM Fee"
+    - "Foreign Transaction Fee"
+    - "Late Payment Fee"
+    - "Service Charge"
+
+financial/atm_cash:
+  mcc: 6011
+  channel: financial
+  merchants:
+    - "ATM Withdrawal"
+    - "Cash Withdrawal"
+    - "Chase ATM"
+    - "Bank of America ATM"
+    - "Wells Fargo ATM"
+    - "ATM Cash Advance"
+
+financial/interest:
+  mcc: null
+  channel: financial
+  merchants:
+    - "Interest Charge"
+    - "Interest Payment"
+    - "Credit Interest"
+    - "Savings Interest"
+    - "Finance Charge"
+    - "Purchase Interest"
+
+financial/investment:
+  mcc: 6211
+  channel: financial
+  merchants:
+    - "Robinhood"
+    - "Fidelity"
+    - {name: "Charles Schwab", aliases: ["SCHWAB"]}
+    - "Vanguard"
+    - {name: "E*TRADE", aliases: ["ETRADE"]}
+    - "Coinbase"
+
+# ---------------- transfers ----------------
+transfers/p2p:
+  mcc: 4829
+  channel: financial
+  merchants:
+    - "Venmo"
+    - "Zelle"
+    - {name: "Cash App", aliases: ["CASHAPP"]}
+    - {name: "PayPal", aliases: ["PYPL"]}
+    - "Apple Cash"
+    - "Google Pay"
+
+transfers/internal:
+  mcc: null
+  channel: financial
+  merchants:
+    - "Transfer to Savings"
+    - "Transfer to Checking"
+    - "Internal Transfer"
+    - "Online Transfer"
+    - "Account Transfer"
+    - "Move Money"
+
+transfers/wire:
+  mcc: 4829
+  channel: financial
+  merchants:
+    - "Wire Transfer"
+    - "Outgoing Wire"
+    - "Incoming Wire"
+    - "Domestic Wire"
+    - "International Wire"
+    - "Wire Out"
+
+# ---------------- income ----------------
+income/payroll:
+  mcc: null
+  channel: financial
+  merchants:
+    - "Direct Deposit"
+    - "Payroll"
+    - "Salary Deposit"
+    - {name: "ADP Payroll", aliases: ["ADP"]}
+    - {name: "Gusto Payroll", aliases: ["GUSTO"]}
+    - "Company Payroll"
+
+income/refund:
+  mcc: null
+  channel: financial
+  merchants:
+    - "Tax Refund"
+    - {name: "IRS Refund", aliases: ["IRS TREAS 310"]}
+    - "Merchant Refund"
+    - "Return Refund"
+    - "State Tax Refund"
+    - "Purchase Refund"
+
+income/deposit:
+  mcc: null
+  channel: financial
+  merchants:
+    - "Mobile Deposit"
+    - "Check Deposit"
+    - "Cash Deposit"
+    - "Remote Deposit"
+    - "Branch Deposit"
+    - "ATM Deposit"
