@@ -13,8 +13,8 @@ Cross-reference, don't duplicate — link to other docs with relative links. The
 
 | #  | Doc | Summary | Status |
 |----|-----|---------|--------|
-| 00 | [00-foundations.md](00-foundations.md) | Problem framing, MCC codes, why descriptors are hard, ML-lifecycle map, label taxonomy | 🚧 next |
-| 01 | 01-data-pipeline.md | Acquire + synthesize descriptors, weak labels, leakage-safe splits, EDA | ⬜ planned |
+| 00 | [00-foundations.md](00-foundations.md) | Problem framing, MCC codes, why descriptors are hard, ML-lifecycle map, label taxonomy | ✅ done |
+| 01 | 01-data-pipeline.md | Acquire + synthesize descriptors, weak labels, leakage-safe splits, EDA | 🚧 next |
 | 02 | 02-baselines.md | TF-IDF + logistic regression baseline + the **reusable eval harness** | ⬜ planned |
 | 03 | 03-finetuning.md | Fine-tune DistilBERT / DeBERTa-v3 teacher; MLflow tracking | ⬜ planned |
 | 04 | 04-ner.md | *(Optional, deferred)* token-level merchant/location NER | ⬜ deferred |
@@ -42,3 +42,4 @@ Cross-reference, don't duplicate — link to other docs with relative links. The
 
 - [decisions/0001-dependency-manager.md](decisions/0001-dependency-manager.md) — `uv` over Poetry
 - [decisions/0002-colab-local-split.md](decisions/0002-colab-local-split.md) — train on Colab, develop/serve locally
+- [decisions/0003-label-taxonomy.md](decisions/0003-label-taxonomy.md) — single-label, 11 categories, namespaced subtypes, abstention over `other`
