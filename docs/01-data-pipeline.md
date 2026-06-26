@@ -1,8 +1,8 @@
 # 01 — Data Pipeline
 
-**Status:** 🚧 design spec (awaiting review → then build) · **Phase:** 1
-**Depends on:** [00-foundations](00-foundations.md) (the taxonomy) · **Used by:**
-[02-baselines](02-baselines.md), [03-finetuning](03-finetuning.md), and every model after
+**Status:** 🚧 build in progress (steps 1–3 of 4 done: gazetteer, synthesizer, splits; gold set
+next) · **Phase:** 1 · **Depends on:** [00-foundations](00-foundations.md) (the taxonomy) ·
+**Used by:** [02-baselines](02-baselines.md), [03-finetuning](03-finetuning.md), every model after
 
 > This document is the *design* for Phase 1. Sections 1–8 are the plan we agree on before writing
 > code; §9 (results) and the confirmed parts of §10 (gotchas) get filled in **after** we build.
@@ -185,8 +185,20 @@ check that the noise model looks real.
 
 ## 9. Results / metrics
 
-_TBD after build: dataset sizes, # merchants, class distribution, descriptor length stats, gold-set
-size + per-class counts, sample descriptors._
+Built with `make data` (seed `20260626`, `noise_level=1.0`, 60 rows/merchant). Full
+[dataset card](../data/dataset_card.md).
+
+- **14,400 rows · 240 merchants · 11 categories / 40 subtypes.**
+- Splits (by merchant group): train 9,600 / 160 · val 2,400 / 40 · test 2,400 / 40.
+- Descriptor length: min 2 / median 18 / max 55. Unique descriptors in train: 63.9%. Debits: 87.6%.
+- Category share 7.5%–12.5% (driven by #subtypes/category) → mild imbalance; headline metric is
+  macro-F1.
+- Sample descriptors: `SQ *STARBUCKS PORTLAND OR`, `WHOLEFDS ATLANTA GA`, `PP*AMZN MKTP US`,
+  `DIRECT DEPOSIT REF#520521`, `POS DEBIT WIRE TRANSFER 11/27`.
+- **Gold set:** TBD (step 4).
+
+Leakage guard, determinism, subtype coverage, and amount-sign correctness are enforced by
+`tests/test_{gazetteer,synthesize,splits,build}.py` (22 tests).
 
 ## 10. Gotchas
 

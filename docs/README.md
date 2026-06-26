@@ -14,7 +14,7 @@ Cross-reference, don't duplicate — link to other docs with relative links. The
 | #  | Doc | Summary | Status |
 |----|-----|---------|--------|
 | 00 | [00-foundations.md](00-foundations.md) | Problem framing, MCC codes, why descriptors are hard, ML-lifecycle map, label taxonomy | ✅ done |
-| 01 | [01-data-pipeline.md](01-data-pipeline.md) | Acquire + synthesize descriptors, weak labels, leakage-safe splits, EDA | 🚧 design |
+| 01 | [01-data-pipeline.md](01-data-pipeline.md) | Acquire + synthesize descriptors, weak labels, leakage-safe splits, EDA | 🚧 build (3/4) |
 | 02 | 02-baselines.md | TF-IDF + logistic regression baseline + the **reusable eval harness** | ⬜ planned |
 | 03 | 03-finetuning.md | Fine-tune DistilBERT / DeBERTa-v3 teacher; MLflow tracking | ⬜ planned |
 | 04 | 04-ner.md | *(Optional, deferred)* token-level merchant/location NER | ⬜ deferred |

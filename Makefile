@@ -1,9 +1,12 @@
 # Common commands. Per-phase targets (data, train, eval, serve, predict) are added as we build.
 
-.PHONY: install test lint format
+.PHONY: install test lint format data
 
 install:        ## Create / refresh the virtual environment
 	uv sync
+
+data:           ## Regenerate the dataset deterministically from configs/data.yaml
+	uv run python scripts/build_dataset.py
 
 test:           ## Run the test suite
 	uv run pytest
