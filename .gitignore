@@ -1,0 +1,51 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+
+# Testing / linting caches
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Data — reproducible from scripts; never commit raw/processed.
+# NOTE: data/gold/ IS committed (the small hand-labeled eval set).
+/data/raw/
+/data/interim/
+/data/processed/
+
+# ML artifacts (weights, exports, experiment tracking)
+/models/
+/artifacts/
+/mlruns/
+/mlflow.db
+*.ckpt
+*.pt
+*.onnx
+
+# Notebooks
+.ipynb_checkpoints/
+
+# Node / Next.js (frontend/)
+node_modules/
+.next/
+out/
+frontend/.env*.local
+
+# Secrets / env
+.env
+.env.*
+!.env.example
+*.pem
+
+# OS / editor
+.DS_Store
+.deepeval/
+.idea/
+.vscode/
