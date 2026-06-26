@@ -16,7 +16,7 @@ Cross-reference, don't duplicate — link to other docs with relative links. The
 | 00 | [00-foundations.md](00-foundations.md) | Problem framing, MCC codes, why descriptors are hard, ML-lifecycle map, label taxonomy | ✅ done |
 | 01 | [01-data-pipeline.md](01-data-pipeline.md) | Acquire + synthesize descriptors, weak labels, leakage-safe splits, EDA | ✅ done |
 | 02 | [02-baselines.md](02-baselines.md) | TF-IDF + logistic regression baseline + the **reusable eval harness** | ✅ done |
-| 03 | 03-finetuning.md | Fine-tune DistilBERT / DeBERTa-v3 teacher; MLflow tracking | 🚧 next |
+| 03 | [03-finetuning.md](03-finetuning.md) | Fine-tune DistilBERT / DeBERTa-v3 teacher; MLflow tracking | 🚧 design |
 | 04 | 04-ner.md | *(Optional, deferred)* token-level merchant/location NER | ⬜ deferred |
 | 05 | 05-distillation.md | Distill teacher → tiny student | ⬜ planned |
 | 06 | 06-optimization.md | ONNX export + INT8 quantization + accuracy/latency Pareto report | ⬜ planned |
@@ -45,3 +45,4 @@ Cross-reference, don't duplicate — link to other docs with relative links. The
 - [decisions/0003-label-taxonomy.md](decisions/0003-label-taxonomy.md) — single-label, 11 categories, namespaced subtypes, abstention over `other`
 - [decisions/0004-synthetic-first-data.md](decisions/0004-synthetic-first-data.md) — synthetic-first data generation, real data as reality check
 - [decisions/0005-eval-protocol.md](decisions/0005-eval-protocol.md) — one shared eval harness, macro-F1 on test + gold, calibration + coverage
+- [decisions/0006-finetuning-approach.md](decisions/0006-finetuning-approach.md) — DistilBERT, single subtype head, MLflow from Phase 3

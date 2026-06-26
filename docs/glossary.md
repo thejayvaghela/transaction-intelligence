@@ -52,5 +52,22 @@ where the term first appears so you can jump to the full explanation.
 - **Accuracy@coverage** — accuracy when you only answer on the most-confident fraction (coverage) of
   inputs; the fair way to compare against an abstaining baseline. _(see [02-baselines](02-baselines.md))_
 
-_More to come as we go: tokenization, logits, transfer learning, distillation temperature, soft
-labels, INT8 quantization, ONNX, drift / PSI, ..._
+- **Tokenization** — splitting text into the units a model consumes. _(see [03-finetuning](03-finetuning.md))_
+- **Subword tokenization** — splitting words into frequent sub-word pieces (WordPiece/SentencePiece),
+  so rare/garbled tokens (`WHOLEFDS`) become known pieces. _(see [03-finetuning](03-finetuning.md))_
+- **Transfer learning / fine-tuning** — start from a model pretrained on huge text, then nudge its
+  weights on your task with little data. _(see [03-finetuning](03-finetuning.md))_
+- **Logits** — a model's raw, unnormalized output scores (pre-softmax). _(see [03-finetuning](03-finetuning.md))_
+- **Softmax** — turns logits into a probability distribution over classes. _(see [03-finetuning](03-finetuning.md))_
+- **Cross-entropy loss** — the standard classification loss: penalizes low probability on the true
+  class. _(see [03-finetuning](03-finetuning.md))_
+- **Learning rate / warmup** — step size for weight updates; warmup ramps it up early for stability.
+  _(see [03-finetuning](03-finetuning.md))_
+- **Epoch / batch size** — one epoch = one pass over the data; batch size = examples per update step.
+  _(see [03-finetuning](03-finetuning.md))_
+- **Temperature scaling** — a post-hoc calibration: divide logits by a scalar T (fit on val) to make
+  confidence match accuracy (lower ECE). _(see [03-finetuning](03-finetuning.md))_
+- **MLflow run / experiment** — a logged training run (params + metrics + artifacts) grouped under a
+  named experiment. _(see [03-finetuning](03-finetuning.md))_
+
+_More to come as we go: distillation temperature, soft labels, INT8 quantization, ONNX, drift / PSI, ..._
