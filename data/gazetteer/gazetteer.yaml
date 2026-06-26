@@ -1,462 +1,2902 @@
-# Merchant gazetteer — curated ground truth seeding the descriptor synthesizer.
-#
-# Keyed by namespaced subtype (must exist in transaction_intelligence.taxonomy).
-# Each block declares default `mcc` + `channel`, then a `merchants` list. A merchant is
-# a bare name (synthesizer handles casing/punctuation/surface forms) OR a
-# {name, aliases: [...]} dict when the real-world abbreviation is non-obvious.
-#
-# channel: card_present | online | recurring | financial   (drives descriptor formatting)
-# mcc: null where these items typically arrive via bank feed without an MCC.
-#
-# Expand breadth here if the synthetic-to-real gap (docs/01) reveals coverage holes.
+# Merchant gazetteer — curated seed + LLM-generated expansion (workflow: expand-gazetteer).
+# Keyed by namespaced subtype. Per-subtype mcc/channel defaults; merchants are a bare name
+# or {name, aliases}. See docs/01-data-pipeline.md.
 
-# ---------------- food_drink ----------------
 food_drink/restaurant:
   mcc: 5812
   channel: card_present
   merchants:
-    - "Olive Garden"
-    - "Cheesecake Factory"
-    - "Applebee's"
-    - "Texas Roadhouse"
-    - "Red Lobster"
-    - "Outback Steakhouse"
-
+  - Olive Garden
+  - Cheesecake Factory
+  - Applebee's
+  - Texas Roadhouse
+  - Red Lobster
+  - Outback Steakhouse
+  - Chili's Grill & Bar
+  - name: TGI Fridays
+    aliases:
+    - TGI FRIDAYS
+    - TGIF
+  - Denny's
+  - name: IHOP
+    aliases:
+    - INTL HOUSE OF PANCAKES
+  - Cracker Barrel
+  - Bob Evans
+  - Waffle House
+  - name: Buffalo Wild Wings
+    aliases:
+    - BWW
+  - Red Robin
+  - name: Perkins Restaurant & Bakery
+    aliases:
+    - PERKINS REST
+  - Friendly's
+  - Steak 'n Shake
+  - Huddle House
+  - Shoney's
+  - Village Inn
+  - Sizzler
+  - Golden Corral
+  - name: Ryan's Grill Buffet & Bakery
+    aliases:
+    - RYANS GRILL
+  - Luby's
+  - name: Furr's Fresh Buffet
+    aliases:
+    - FURRS BUFFET
+  - Bonefish Grill
+  - name: Carrabba's Italian Grill
+    aliases:
+    - CARRABBAS
+  - Bahama Breeze
+  - Longhorn Steakhouse
+  - Seasons 52
+  - name: Eddie V's Prime Seafood
+    aliases:
+    - EDDIE VS
+  - name: The Capital Grille
+    aliases:
+    - CAPITAL GRILLE
+  - name: Morton's The Steakhouse
+    aliases:
+    - MORTONS STEAKHOUSE
+  - name: Ruth's Chris Steak House
+    aliases:
+    - RUTHS CHRIS
+  - name: Fleming's Prime Steakhouse
+    aliases:
+    - FLEMINGS STEAKHOUSE
+  - Benihana
+  - name: P.F. Chang's
+    aliases:
+    - PF CHANGS
+  - name: Pappadeaux Seafood Kitchen
+    aliases:
+    - PAPPADEAUX
+  - Mimi's Cafe
 food_drink/coffee:
   mcc: 5814
   channel: card_present
   merchants:
-    - {name: "Starbucks", aliases: ["SBUX", "STARBUCKS STORE"]}
-    - {name: "Dunkin", aliases: ["DUNKIN DONUTS"]}
-    - "Peet's Coffee"
-    - "Blue Bottle Coffee"
-    - "Philz Coffee"
-    - "Caribou Coffee"
-
+  - name: Starbucks
+    aliases:
+    - SBUX
+    - STARBUCKS STORE
+  - name: Dunkin
+    aliases:
+    - DUNKIN DONUTS
+  - Peet's Coffee
+  - Blue Bottle Coffee
+  - Philz Coffee
+  - Caribou Coffee
+  - name: The Coffee Bean & Tea Leaf
+    aliases:
+    - CBTL
+  - Lavazza
+  - Intelligentsia Coffee
+  - Counter Culture Coffee
+  - Verve Coffee Roasters
+  - Onyx Coffee Lab
+  - Equator Coffees
+  - Methodical Coffee
+  - Sightglass Coffee
+  - Coava Coffee Roasters
+  - Ritual Coffee Roasters
+  - Four Barrel Coffee
+  - Stumptown Coffee Roasters
+  - La Colombe Coffee Roasters
+  - Tim Hortons
+  - The Human Bean
+  - Dutch Bros Coffee
+  - Scooter's Coffee
+  - Biggby Coffee
+  - PJ's Coffee
+  - Dunn Brothers Coffee
+  - Aroma Joe's Coffee
+  - Ziggi's Coffee
+  - 7 Brew Coffee
+  - Black Rock Coffee Bar
+  - Dazbog Coffee
+  - Coffee Beanery
+  - Saxbys Coffee
+  - Foxtail Coffee Co
+  - Colectivo Coffee
+  - Zingerman's Coffee Company
+  - Reanimator Coffee
+  - Devocion
+  - Partners Coffee
 food_drink/fast_food:
   mcc: 5814
   channel: card_present
   merchants:
-    - {name: "McDonald's", aliases: ["MCDONALDS"]}
-    - "Burger King"
-    - "Wendy's"
-    - "Taco Bell"
-    - {name: "Chick-fil-A", aliases: ["CHICKFILA"]}
-    - "Chipotle"
-
+  - name: McDonald's
+    aliases:
+    - MCDONALDS
+  - Burger King
+  - Wendy's
+  - Taco Bell
+  - name: Chick-fil-A
+    aliases:
+    - CHICKFILA
+  - Chipotle
+  - Subway
+  - name: Domino's Pizza
+    aliases:
+    - DOMINOS
+  - Pizza Hut
+  - name: KFC
+    aliases:
+    - KENTUCKY FRIED CHICKEN
+  - name: Popeyes Louisiana Kitchen
+    aliases:
+    - POPEYES
+  - name: Sonic Drive-In
+    aliases:
+    - SONIC
+  - name: Dairy Queen
+    aliases:
+    - DQ
+  - Five Guys
+  - Whataburger
+  - Jack in the Box
+  - Arby's
+  - name: Raising Cane's Chicken Fingers
+    aliases:
+    - RAISING CANES
+    - CANES
+  - Wingstop
+  - Zaxby's
+  - Del Taco
+  - Hardee's
+  - name: Carl's Jr.
+    aliases:
+    - CARLS JR
+  - name: Long John Silver's
+    aliases:
+    - LJS
+  - Church's Chicken
+  - name: Cook Out
+    aliases:
+    - COOKOUT
+  - Culver's
+  - Checkers
+  - Rally's
+  - name: In-N-Out Burger
+    aliases:
+    - IN N OUT
+  - Shake Shack
+  - name: Habit Burger Grill
+    aliases:
+    - THE HABIT
+  - Portillo's
+  - Bojangles
+  - El Pollo Loco
+  - Panda Express
+  - Waba Grill
+  - Fatburger
+  - Krystal
+  - name: Hot 'n Now
+    aliases:
+    - HOT N NOW
 food_drink/bar:
   mcc: 5813
   channel: card_present
   merchants:
-    - "The Tipsy Crow"
-    - "O'Malley's Pub"
-    - "Yard House"
-    - "BJ's Brewhouse"
-    - "The Brass Tap"
-    - "The Local Tavern"
-
+  - The Tipsy Crow
+  - O'Malley's Pub
+  - Yard House
+  - BJ's Brewhouse
+  - The Brass Tap
+  - The Local Tavern
+  - name: Applebee's Neighborhood Grill & Bar
+    aliases:
+    - APPLEBEES
+  - Hooters
+  - Twin Peaks Restaurant
+  - name: Dave & Buster's
+    aliases:
+    - D&B
+  - name: Gordon Biersch Brewery Restaurant
+    aliases:
+    - GORDON BIERSCH
+  - name: Rock Bottom Restaurant & Brewery
+    aliases:
+    - ROCK BOTTOM
+  - name: Old Chicago Pizza & Taproom
+    aliases:
+    - OLD CHICAGO
+  - Houlihan's
+  - Duffy's Sports Grill
+  - name: Arooga's Grille House & Sports Bar
+    aliases:
+    - AROOGAS
+  - name: Beef 'O' Brady's
+    aliases:
+    - BEEF O BRADYS
+  - name: Quaker Steak & Lube
+    aliases:
+    - QSL
+  - Fuddruckers
+  - name: World of Beer
+    aliases:
+    - WOB
+  - Bottles & Bones
+  - Mellow Mushroom
+  - name: Miller's Ale House
+    aliases:
+    - MILLERS ALE HOUSE
+  - name: Tilted Kilt Pub & Eatery
+    aliases:
+    - TILTED KILT
+  - Bar Louie
+  - Yard Bar
+  - name: The Greene Turtle Sports Bar & Grille
+    aliases:
+    - GREENE TURTLE
+  - Foxhound Pub & Grille
+  - Firefly Bar & Grille
+  - The Rusty Nail
+  - name: Thirsty Lion Gastropub & Grill
+    aliases:
+    - THIRSTY LION
+  - name: Brick House Tavern + Tap
+    aliases:
+    - BRICK HOUSE TAVERN
+  - Hops & Grain Alehouse
+  - The Blind Pig
+  - Iron Horse Saloon
+  - The Pour House
+  - name: Smoky Bones Bar & Fire Grill
+    aliases:
+    - SMOKY BONES
+  - Ale House Sports Bar & Grill
 food_drink/delivery:
   mcc: 5812
   channel: online
   merchants:
-    - {name: "DoorDash", aliases: ["DD DOORDASH"]}
-    - "Uber Eats"
-    - "Grubhub"
-    - "Postmates"
-    - "Seamless"
-    - "Caviar"
-
-# ---------------- groceries ----------------
+  - name: DoorDash
+    aliases:
+    - DD DOORDASH
+  - Uber Eats
+  - Grubhub
+  - Postmates
+  - Seamless
+  - Caviar
+  - Instacart
+  - DoorDash Drive
+  - Gopuff
+  - Waitr
+  - Bite Squad
+  - Delivery.com
+  - ChowNow
+  - EatStreet
+  - Slice
+  - Fantuan
+  - Weee!
+  - Munchery
+  - Foxtrot
+  - name: Favor Delivery
+    aliases:
+    - Favor
+  - Relay Food
+  - Dumpling
+  - Ordermark
+  - Olo
+  - Lunchbox
+  - Ritual
+  - Foodshed
+  - Mercato
+  - Shipt
+  - Swipeby
+  - Bopple
+  - Noshway
+  - Zifty
+  - OrderUp
+  - Drizly
+  - Saucey
+  - name: Minibar Delivery
+    aliases:
+    - Minibar
+  - Bottle Rocket
+  - GetUpside
+  - Forkable
 groceries/supermarket:
   mcc: 5411
   channel: card_present
   merchants:
-    - {name: "Whole Foods", aliases: ["WHOLEFDS", "WHOLE FOODS MKT"]}
-    - "Trader Joe's"
-    - "Safeway"
-    - "Kroger"
-    - "Publix"
-    - "Wegmans"
-
+  - name: Whole Foods
+    aliases:
+    - WHOLEFDS
+    - WHOLE FOODS MKT
+  - Trader Joe's
+  - Safeway
+  - Kroger
+  - Publix
+  - Wegmans
+  - Albertsons
+  - name: H-E-B
+    aliases:
+    - HEB
+  - Meijer
+  - Hy-Vee
+  - ShopRite
+  - name: WinCo Foods
+    aliases:
+    - WINCO
+  - Harris Teeter
+  - Giant Food
+  - Food Lion
+  - Winn-Dixie
+  - name: Stater Bros. Markets
+    aliases:
+    - STATER BROS
+  - Raley's
+  - Dillons
+  - King Soopers
+  - Fred Meyer
+  - QFC
+  - name: Fry's Food Stores
+    aliases:
+    - FRYS FOOD
+  - name: Smith's Food and Drug
+    aliases:
+    - SMITHS FOOD
+  - Mariano's
+  - name: Jewel-Osco
+    aliases:
+    - JEWEL OSCO
+  - Vons
+  - Pavilions
+  - Tom Thumb
+  - Randalls
+  - name: Stop & Shop
+    aliases:
+    - STOP AND SHOP
+  - name: Giant Food Stores
+    aliases:
+    - GIANT FOOD STR
+  - Price Chopper
+  - Market Basket
+  - Hannaford
+  - name: Brookshire's
+    aliases:
+    - BROOKSHIRES
+  - name: Ingles Markets
+    aliases:
+    - INGLES MKT
+  - Lucky Supermarkets
+  - name: Cardenas Markets
+    aliases:
+    - CARDENAS MKT
+  - Grocery Outlet
 groceries/convenience:
   mcc: 5499
   channel: card_present
   merchants:
-    - {name: "7-Eleven", aliases: ["7 ELEVEN"]}
-    - "Circle K"
-    - "Wawa"
-    - "Sheetz"
-    - "QuikTrip"
-    - "Cumberland Farms"
-
+  - name: 7-Eleven
+    aliases:
+    - 7 ELEVEN
+  - Circle K
+  - Wawa
+  - Sheetz
+  - QuikTrip
+  - Cumberland Farms
+  - Speedway
+  - name: Casey's General Store
+    aliases:
+    - CASEYS
+  - Kum & Go
+  - name: Pilot Flying J
+    aliases:
+    - PILOT FJ
+  - name: Love's Travel Stop
+    aliases:
+    - LOVES TS
+  - name: Holiday Stationstores
+    aliases:
+    - HOLIDAY STNSTORE
+  - Allsup's
+  - Maverik
+  - name: Buc-ee's
+    aliases:
+    - BUCEES
+  - GetGo
+  - Kwik Trip
+  - Kwik Star
+  - RaceTrac
+  - Raceway
+  - Thorntons
+  - name: Rutters
+    aliases:
+    - RUTTERS FARM STORE
+  - Fas Mart
+  - Flash Foods
+  - name: Gate Petroleum
+    aliases:
+    - GATE
+  - Twice Daily
+  - name: Mapco Express
+    aliases:
+    - MAPCO
+  - Roadrunner Markets
+  - name: ExtraMile Convenience Stores
+    aliases:
+    - EXTRAMILE
+  - ampm
+  - name: Stripes Convenience Stores
+    aliases:
+    - STRIPES
+  - Town Pump
+  - name: Loaf 'N Jug
+    aliases:
+    - LOAF N JUG
+  - name: Parker's Kitchen
+    aliases:
+    - PARKERS
+  - Handy Andy
+  - Corner Store
+  - Minit Mart
+  - name: E-Z Mart
+    aliases:
+    - EZMART
+  - name: Stewart's Shops
+    aliases:
+    - STEWARTS
+  - name: United Dairy Farmers
+    aliases:
+    - UDF
 groceries/specialty:
   mcc: 5499
   channel: card_present
   merchants:
-    - "Sprouts Farmers Market"
-    - "Total Wine"
-    - "The Spice House"
-    - "Bristol Farms"
-    - "Eataly"
-    - "GNC"
-
-# ---------------- shopping ----------------
+  - Sprouts Farmers Market
+  - Total Wine
+  - The Spice House
+  - Bristol Farms
+  - Eataly
+  - GNC
+  - Whole Foods Market
+  - Fresh Thyme Market
+  - name: Natural Grocers
+    aliases:
+    - NTGR
+  - Earth Fare
+  - Lucky's Market
+  - The Fresh Market
+  - Jungle Jim's International Market
+  - H Mart
+  - 99 Ranch Market
+  - Mitsuwa Marketplace
+  - Zion Market
+  - Buena Vista Market
+  - Kalustyan's
+  - Nuts.com
+  - iHerb
+  - Thrive Market
+  - Vitacost
+  - Nuts to You
+  - name: World Market
+    aliases:
+    - COST PLUS WORLD MKT
+  - Sigona's Farmers Market
+  - New Seasons Market
+  - PCC Community Markets
+  - Central Market
+  - Jungle Jim's
+  - Erewhon
+  - Lassens Natural Foods
+  - Sunflower Shoppe
+  - Rainbow Grocery
+  - Willy Street Co-op
+  - Seward Co-op
+  - Honest Weight Food Co-op
+  - Mustard Seed Market
+  - Jungle Jim's Eastgate
+  - Russo's International Market
 shopping/general_merch:
   mcc: 5310
   channel: card_present
   merchants:
-    - {name: "Walmart", aliases: ["WM SUPERCENTER"]}
-    - "Target"
-    - {name: "Costco", aliases: ["COSTCO WHSE"]}
-    - "Sam's Club"
-    - "Dollar General"
-    - "BJ's Wholesale"
-
+  - name: Walmart
+    aliases:
+    - WM SUPERCENTER
+  - Target
+  - name: Costco
+    aliases:
+    - COSTCO WHSE
+  - Sam's Club
+  - Dollar General
+  - BJ's Wholesale
+  - name: Kohl's
+    aliases:
+    - KOHLS
+  - name: Macy's
+    aliases:
+    - MACYS
+  - Dollar Tree
+  - Family Dollar
+  - Five Below
+  - name: TJ Maxx
+    aliases:
+    - TJX
+    - TJ MAXX
+  - Marshalls
+  - name: HomeGoods
+    aliases:
+    - HOME GOODS
+  - Big Lots
+  - Aldi
+  - Lidl
+  - Menards
+  - Shopko
+  - name: Roses Stores
+    aliases:
+    - ROSES DISC
+  - name: Ollie's Bargain Outlet
+    aliases:
+    - OLLIES
+  - name: Tuesday Morning
+    aliases:
+    - TUE MORNING
+  - name: 99 Cents Only Stores
+    aliases:
+    - 99 CENTS ONLY
+  - Deals
+  - name: Ocean State Job Lot
+    aliases:
+    - OSJL
+  - name: Christmas Tree Shops
+    aliases:
+    - XMAS TREE SHOPS
+  - name: Boscov's
+    aliases:
+    - BOSCOVS
+  - Bealls
+  - Stage Stores
+  - Gordmans
+  - name: Stein Mart
+    aliases:
+    - STEINMART
+  - name: Burlington
+    aliases:
+    - BURLINGTON COAT
+  - name: Nordstrom Rack
+    aliases:
+    - NRACK
+  - name: Saks Off 5th
+    aliases:
+    - SAKS OFF5TH
+  - Amazon Fresh
+  - name: Jet.com
+    aliases:
+    - JET COM
+  - Boxed
 shopping/clothing:
   mcc: 5651
   channel: card_present
   merchants:
-    - "Gap"
-    - "Old Navy"
-    - "H&M"
-    - "Zara"
-    - "Nordstrom"
-    - "Uniqlo"
-
+  - Gap
+  - Old Navy
+  - H&M
+  - Zara
+  - Nordstrom
+  - Uniqlo
+  - Bloomingdale's
+  - name: Banana Republic
+    aliases:
+    - BANANA REP
+  - name: J.Crew
+    aliases:
+    - JCREW
+  - Ann Taylor
+  - LOFT
+  - Express
+  - name: Forever 21
+    aliases:
+    - F21
+  - name: Urban Outfitters
+    aliases:
+    - UO
+    - URBN OUTFITTERS
+  - Free People
+  - Anthropologie
+  - name: American Eagle Outfitters
+    aliases:
+    - AEO
+    - AMERICAN EAGLE
+  - name: Abercrombie & Fitch
+    aliases:
+    - A&F
+    - ANF
+  - name: Hollister
+    aliases:
+    - HCO
+  - name: Victoria's Secret
+    aliases:
+    - VS
+    - VICTORIA SECRET
+  - PINK
+  - Torrid
+  - Lane Bryant
+  - Chico's
+  - name: White House Black Market
+    aliases:
+    - WHBM
+  - Cato
+  - name: Burlington Coat Factory
+    aliases:
+    - BURLINGTON
+  - name: T.J. Maxx
+    aliases:
+    - TJMAXX
+    - TJ MAXX
+  - name: Ross Dress for Less
+    aliases:
+    - ROSS
+  - Dillard's
+  - name: Saks Fifth Avenue
+    aliases:
+    - SAKS
+  - name: Neiman Marcus
+    aliases:
+    - NMG
+    - NEIMAN MCS
+  - name: Ralph Lauren
+    aliases:
+    - POLO RALPH LAUREN
+    - RL
+  - Tommy Hilfiger
+  - name: Calvin Klein
+    aliases:
+    - CK
+  - Kenneth Cole
+  - Talbots
+  - J.Jill
 shopping/electronics:
   mcc: 5732
   channel: card_present
   merchants:
-    - {name: "Best Buy", aliases: ["BESTBUY"]}
-    - "Micro Center"
-    - "B&H Photo"
-    - "GameStop"
-    - "Newegg"
-    - "Apple Store"
-
+  - name: Best Buy
+    aliases:
+    - BESTBUY
+  - Micro Center
+  - B&H Photo
+  - GameStop
+  - Newegg
+  - Apple Store
+  - Fry's Electronics
+  - name: Tiger Direct
+    aliases:
+    - TIGERDIRECT
+  - Adorama
+  - Crutchfield
+  - RadioShack
+  - name: PC Richard & Son
+    aliases:
+    - PC RICHARD
+  - name: Conn's HomePlus
+    aliases:
+    - CONNS
+  - hhgregg
+  - Rex Electronics
+  - name: Magnolia Hi-Fi
+    aliases:
+    - MAGNOLIA HIFI
+  - CompUSA
+  - Circuit City
+  - name: Abt Electronics
+    aliases:
+    - ABT
+  - DataVision
+  - Intrex
+  - Warehouse Direct
+  - Electronic Express
+  - Good Guys
+  - name: Nobody Beats The Wiz
+    aliases:
+    - THE WIZ
+  - name: Tweeter Home Entertainment
+    aliases:
+    - TWEETER
+  - Ultimate Electronics
+  - name: J&R Music World
+    aliases:
+    - J&R
+  - Sony Store
+  - Microsoft Store
+  - name: Samsung Experience Store
+    aliases:
+    - SAMSUNG STORE
+  - name: Verizon Store
+    aliases:
+    - VZW
+  - name: AT&T Store
+    aliases:
+    - ATT STORE
+  - name: T-Mobile Store
+    aliases:
+    - TMOBILE
+  - Sprint Store
+  - name: uBreakiFix
+    aliases:
+    - UBREAKIFIX
+  - iFixit
+  - name: Batteries Plus Bulbs
+    aliases:
+    - BATTERIES PLUS
+  - name: Office Depot Tech
+    aliases:
+    - OFFICE DEPOT
+  - name: Staples Technology
+    aliases:
+    - STAPLES
 shopping/online_marketplace:
   mcc: 5999
   channel: online
   merchants:
-    - {name: "Amazon", aliases: ["AMZN", "AMZN MKTP US", "AMAZON.COM"]}
-    - "eBay"
-    - "Etsy"
-    - "AliExpress"
-    - "Mercari"
-    - "Wish"
-
-# ---------------- transportation ----------------
+  - name: Amazon
+    aliases:
+    - AMZN
+    - AMZN MKTP US
+    - AMAZON.COM
+  - eBay
+  - Etsy
+  - AliExpress
+  - Mercari
+  - Wish
+  - name: Walmart Marketplace
+    aliases:
+    - WAL-MART MKTPL
+    - WALMART.COM
+  - name: Target Plus
+    aliases:
+    - TARGET.COM
+  - Poshmark
+  - Depop
+  - Bonanza
+  - Ruby Lane
+  - OfferUp
+  - name: Facebook Marketplace
+    aliases:
+    - FB MARKETPLACE
+  - Craigslist
+  - name: Rakuten
+    aliases:
+    - RAKUTEN.COM
+  - name: Overstock
+    aliases:
+    - OVRSTK
+    - OVERSTOCK.COM
+  - Zulily
+  - name: Groupon Goods
+    aliases:
+    - GROUPON
+  - name: Sears Marketplace
+    aliases:
+    - SEARS.COM
+  - name: Kohl's Online
+    aliases:
+    - KOHLS.COM
+  - name: Best Buy Marketplace
+    aliases:
+    - BESTBUY.COM
+  - name: Wayfair
+    aliases:
+    - WAYFAIR.COM
+  - Reverb
+  - StockX
+  - GOAT
+  - name: ThredUp
+    aliases:
+    - THREDUP.COM
+  - name: TheRealReal
+    aliases:
+    - TRR
+    - THEREALREAL.COM
+  - name: Vestiaire Collective
+    aliases:
+    - VESTIAIRE
+  - name: Swap.com
+    aliases:
+    - SWAP COM
+  - VarageSale
+  - Nextdoor Offers
+  - Listia
+  - Tradesy
+  - Chairish
+  - Tophatter
+  - DealDash
+  - name: 1stDibs
+    aliases:
+    - 1STDIBS.COM
+  - name: Shopify Shop
+    aliases:
+    - SHOP APP
 transportation/rideshare:
   mcc: 4121
   channel: online
   merchants:
-    - {name: "Uber", aliases: ["UBER TRIP"]}
-    - "Lyft"
-    - "Via"
-    - "Curb"
-    - "Alto"
-    - "Wingz"
-
+  - name: Uber
+    aliases:
+    - UBER TRIP
+  - Lyft
+  - Via
+  - Curb
+  - Alto
+  - Wingz
+  - Gett
+  - Juno
+  - name: Ztrip
+    aliases:
+    - ZTRIP
+  - name: HopSkipDrive
+    aliases:
+    - HOP SKIP DRIVE
+  - Zum
+  - Shuddle
+  - Fasten
+  - name: Ride Austin
+    aliases:
+    - RIDE ATX
+  - name: InDriver
+    aliases:
+    - INDRV
+  - Wridz
+  - Spare
+  - Mozio
+  - Kango
+  - Bubbl
+  - Arcade City
+  - Ridester
+  - Nomad Rides
+  - Mystro
+  - Bandwagon
+  - Blacklane
+  - Revel
+  - Bellhop
+  - Hitch
+  - Scoop
+  - Chariot
+  - Bridj
+  - Swvl
+  - Arro
+  - Loup
+  - name: GoGoGrandparent
+    aliases:
+    - GOGO GRANDPARENT
+    - GOGOGP
+  - Uzurv
+  - name: AccessaRide
+    aliases:
+    - ACCESSARIDE
+  - Envoy America
+  - RideYellow
 transportation/fuel:
   mcc: 5541
   channel: card_present
   merchants:
-    - "Shell"
-    - "Chevron"
-    - {name: "ExxonMobil", aliases: ["EXXON", "MOBIL"]}
-    - "BP"
-    - "Arco"
-    - "Valero"
-
+  - Shell
+  - Chevron
+  - name: ExxonMobil
+    aliases:
+    - EXXON
+    - MOBIL
+  - BP
+  - Arco
+  - Valero
+  - Sunoco
+  - name: Marathon
+    aliases:
+    - MARATHON PETRO
+  - name: Love's Travel Stops
+    aliases:
+    - LOVES
+  - name: TA Travel Centers
+    aliases:
+    - TRAVEL CENTERS OF AMERICA
+    - TA PETRO
+  - Sinclair
+  - name: '76'
+    aliases:
+    - PHILLIPS 76
+  - Citgo
+  - name: Murphy USA
+    aliases:
+    - MURPHY EXPRESS
+  - name: Kroger Fuel
+    aliases:
+    - KROGER GAS
+  - name: Sam's Club Fuel
+    aliases:
+    - SAMS CLUB GAS
+  - name: Costco Gasoline
+    aliases:
+    - COSTCO GAS
+  - name: BJ's Fuel
+    aliases:
+    - BJS FUEL
+  - Yesway
+  - Fuel City
+  - name: H-E-B Fuel
+    aliases:
+    - HEB GAS
+  - name: Delek US
+    aliases:
+    - DELEK
+  - Global Partners
+  - name: Motiva Enterprises
+    aliases:
+    - MOTIVA
 transportation/transit:
   mcc: 4111
   channel: card_present
   merchants:
-    - "BART"
-    - {name: "MTA", aliases: ["MTA NYCT"]}
-    - "WMATA"
-    - "Caltrain"
-    - "Clipper"
-    - "SEPTA"
-
+  - BART
+  - name: MTA
+    aliases:
+    - MTA NYCT
+  - WMATA
+  - Caltrain
+  - Clipper
+  - SEPTA
+  - Metro Transit
+  - name: Chicago Transit Authority
+    aliases:
+    - CTA
+  - name: LA Metro
+    aliases:
+    - LACMTA
+  - name: NJ Transit
+    aliases:
+    - NJT
+  - name: MBTA
+    aliases:
+    - Massachusetts Bay Transportation Authority
+  - MARTA
+  - Sound Transit
+  - name: RTD Denver
+    aliases:
+    - RTD
+  - name: VTA
+    aliases:
+    - Santa Clara Valley Transportation Authority
+  - name: DART
+    aliases:
+    - Dallas Area Rapid Transit
+  - TriMet
+  - name: WMATA SmarTrip
+    aliases:
+    - SmarTrip
+  - name: PATH Train
+    aliases:
+    - PATH
+  - METRA
+  - name: Long Island Rail Road
+    aliases:
+    - LIRR
+  - name: Metro-North Railroad
+    aliases:
+    - Metro-North
+  - Amtrak
+  - Sunrail
+  - name: MARC Train
+    aliases:
+    - MARC
+  - name: Shore Line East
+    aliases:
+    - SLE
+  - name: Capital Metro
+    aliases:
+    - CapMetro
+  - LYNX
+  - IndyGo
+  - name: RTA Cleveland
+    aliases:
+    - GCRTA
+  - name: CATS Charlotte
+    aliases:
+    - CATS
+  - name: Hampton Roads Transit
+    aliases:
+    - HRT
+  - name: PRTC OmniRide
+    aliases:
+    - OmniRide
+  - name: HART
+    aliases:
+    - Hillsborough Area Regional Transit
+  - name: GRTC Transit System
+    aliases:
+    - GRTC
+  - Valley Metro
+  - Sun Tran
+  - ABQ RIDE
+  - COASTER
+  - Foothill Transit
 transportation/parking_tolls:
   mcc: 7523
   channel: card_present
   merchants:
-    - "SpotHero"
-    - "LAZ Parking"
-    - "FasTrak"
-    - {name: "E-ZPass", aliases: ["EZPASS"]}
-    - "ParkWhiz"
-    - "Premier Parking"
-
-# ---------------- travel ----------------
+  - SpotHero
+  - LAZ Parking
+  - FasTrak
+  - name: E-ZPass
+    aliases:
+    - EZPASS
+  - ParkWhiz
+  - Premier Parking
+  - SunPass
+  - name: I-PASS
+    aliases:
+    - IPASS
+  - Peach Pass
+  - name: NC Quick Pass
+    aliases:
+    - NCQP
+  - SunToll
+  - PIKEPASS
+  - K-TAG
+  - name: OOCEA ExpressLane
+    aliases:
+    - OOCEA
+  - Palmetto Expressway
+  - Alamo Parking
+  - ABM Parking
+  - name: Standard Parking
+    aliases:
+    - SP+
+  - name: SP+ Parking
+    aliases:
+    - SP PLUS
+  - name: Imperial Parking
+    aliases:
+    - Impark
+  - Towne Park
+  - InterPark
+  - Central Parking
+  - QuickPark
+  - ParkJockey
+  - Parkway Corp
+  - REEF Parking
+  - Parking.com
+  - ParkMobile
+  - name: PayByPhone Parking
+    aliases:
+    - PBP
+  - Passport Parking
+  - FlashParking
+  - name: T2 Systems Parking
+    aliases:
+    - T2 PARK
+  - Oahu Parking
+  - name: Golden Gate Bridge Toll
+    aliases:
+    - GGB TOLL
+  - Bay Area FasTrak
+  - name: NTTA TollTag
+    aliases:
+    - NTTA
+  - TxTag
+  - name: EXPRESSLanes Virginia
+    aliases:
+    - VDOT EXPRESS
+  - name: PA Turnpike
+    aliases:
+    - PATPK
 travel/airline:
   mcc: 4511
   channel: online
   merchants:
-    - {name: "Delta Air Lines", aliases: ["DELTA"]}
-    - {name: "United Airlines", aliases: ["UNITED"]}
-    - {name: "American Airlines", aliases: ["AMERICAN AIR"]}
-    - "Southwest Airlines"
-    - "JetBlue"
-    - "Alaska Airlines"
-
+  - name: Delta Air Lines
+    aliases:
+    - DELTA
+  - name: United Airlines
+    aliases:
+    - UNITED
+  - name: American Airlines
+    aliases:
+    - AMERICAN AIR
+  - Southwest Airlines
+  - JetBlue
+  - Alaska Airlines
+  - name: Spirit Airlines
+    aliases:
+    - SPIRIT AIR
+    - NK
+  - name: Frontier Airlines
+    aliases:
+    - FRON AIR
+    - FRONTIER AIRLINES INC
+  - name: Hawaiian Airlines
+    aliases:
+    - HAWAIIAN AIR
+    - HA
+  - name: Sun Country Airlines
+    aliases:
+    - SUN COUNTRY AIR
+  - name: Allegiant Air
+    aliases:
+    - ALLEGIANT AIRLINES
+    - G4
+  - Breeze Airways
+  - Avelo Airlines
+  - Cape Air
+  - Silver Airways
+  - Contour Airlines
+  - Boutique Air
+  - Mesa Airlines
+  - name: SkyWest Airlines
+    aliases:
+    - SKYWEST AIR
+  - Endeavor Air
+  - PSA Airlines
+  - Piedmont Airlines
+  - Envoy Air
+  - name: Republic Airways
+    aliases:
+    - REPUBLIC AIR
+  - CommutAir
+  - Air Wisconsin
+  - name: Ravn Alaska
+    aliases:
+    - RAVN AIR
+  - Grant Aviation
+  - Tropic Ocean Airways
+  - Key Lime Air
+  - name: Southern Airways Express
+    aliases:
+    - SOUTHERN AIRWAYS
+  - Mokulele Airlines
+  - name: Vieques Air Link
+    aliases:
+    - VAL AIR
+  - name: American Eagle Airlines
+    aliases:
+    - AMERICAN EAGLE
+  - Trans States Airlines
+  - GoJet Airlines
+  - Compass Airlines
+  - Island Air
+  - PenAir
+  - Surf Air
 travel/lodging:
   mcc: 7011
   channel: online
   merchants:
-    - "Marriott"
-    - "Hilton"
-    - "Hyatt"
-    - "Holiday Inn"
-    - "Airbnb"
-    - "Best Western"
-
+  - Marriott
+  - Hilton
+  - Hyatt
+  - Holiday Inn
+  - Airbnb
+  - Best Western
+  - name: Marriott Bonvoy
+    aliases:
+    - MARRIOTT BONVOY
+  - name: IHG Hotels & Resorts
+    aliases:
+    - IHG HOTELS
+  - name: Wyndham Hotels
+    aliases:
+    - WYNDHAM HTL
+  - name: Choice Hotels
+    aliases:
+    - CHOICE HTLS
+  - name: Radisson Hotels
+    aliases:
+    - RADISSON HTL
+  - Motel 6
+  - Super 8
+  - Days Inn
+  - name: Hampton Inn
+    aliases:
+    - HAMPTON INN HILTON
+  - Comfort Inn
+  - Quality Inn
+  - name: La Quinta Inn
+    aliases:
+    - LA QUINTA
+  - name: Courtyard by Marriott
+    aliases:
+    - COURTYARD MARRIOTT
+    - CRTYD MARRIOTT
+  - name: Residence Inn
+    aliases:
+    - RESIDENCE INN MARRIOTT
+  - name: Extended Stay America
+    aliases:
+    - EXTENDED STAY AME
+    - EXTD STAY AMER
+  - name: WoodSpring Suites
+    aliases:
+    - WOODSPRING STE
+  - name: Staybridge Suites
+    aliases:
+    - STAYBRIDGE STE
+  - name: Candlewood Suites
+    aliases:
+    - CANDLEWOOD STE
+  - name: Homewood Suites
+    aliases:
+    - HOMEWOOD STE
+  - name: TownePlace Suites
+    aliases:
+    - TOWNEPLACE STE
+  - Kimpton Hotels
+  - name: Omni Hotels & Resorts
+    aliases:
+    - OMNI HOTELS
+  - Loews Hotels
+  - name: Four Seasons Hotels
+    aliases:
+    - FOUR SEASONS HTL
+  - name: Ritz-Carlton
+    aliases:
+    - RITZ CARLTON
+  - W Hotels
+  - name: Waldorf Astoria
+    aliases:
+    - WALDORF ASTORIA HTL
+  - Virgin Hotels
+  - Graduate Hotels
+  - name: Autograph Collection
+    aliases:
+    - AUTOGRAPH COLL MARRIOTT
+  - name: Tribute Portfolio
+    aliases:
+    - TRIBUTE PORTFOLIO
+  - Dream Hotels
+  - VRBO
+  - Vacasa
 travel/car_rental:
   mcc: 7512
   channel: online
   merchants:
-    - "Hertz"
-    - {name: "Enterprise Rent-A-Car", aliases: ["ENTERPRISE"]}
-    - "Avis"
-    - "Budget"
-    - "National Car Rental"
-    - "Alamo"
-
-# ---------------- bills_utilities ----------------
+  - Hertz
+  - name: Enterprise Rent-A-Car
+    aliases:
+    - ENTERPRISE
+  - Avis
+  - Budget
+  - National Car Rental
+  - Alamo
+  - name: Dollar Car Rental
+    aliases:
+    - DOLLAR RENT A CAR
+  - name: Thrifty Car Rental
+    aliases:
+    - THRIFTY AUTO
+  - name: Sixt Rent a Car
+    aliases:
+    - SIXT
+  - name: Payless Car Rental
+    aliases:
+    - PAYLESS AUTO RENTAL
+  - name: Fox Rent A Car
+    aliases:
+    - FOX RENTAL
+  - name: ACE Rent A Car
+    aliases:
+    - ACE RENTAL
+  - name: Advantage Rent A Car
+    aliases:
+    - ADVANTAGE RENTACAR
+  - name: E-Z Rent-A-Car
+    aliases:
+    - EZ RENT A CAR
+    - EZRENTACAR
+  - Midway Car Rental
+  - name: U-Save Auto Rental
+    aliases:
+    - USAVE AUTO
+  - Priceless Car Rental
+  - name: Rent-A-Wreck
+    aliases:
+    - RENTAWRECK
+  - Zipcar
+  - Turo
+  - Getaround
+  - name: Silvercar by Audi
+    aliases:
+    - SILVERCAR
+  - name: Kyte Car Rental
+    aliases:
+    - KYTE
+  - Rideshare2
+  - Auto Europe
+  - name: CarRentals.com
+    aliases:
+    - CARRENTALS COM
+  - name: Costco Travel Car Rental
+    aliases:
+    - COSTCO TRAVEL AUTO
+  - name: Hotwire Car Rental
+    aliases:
+    - HOTWIRE AUTO
+  - name: Penske Car Rental
+    aliases:
+    - PENSKE AUTO RENTAL
+  - Flexdrive
+  - HyreCar
+  - Envoy
+  - name: Avail Car Sharing
+    aliases:
+    - AVAIL
+  - Ridecell
+  - name: Audi on demand
+    aliases:
+    - AUDI ON DEMAND
+  - Maven
+  - name: Blink Mobility
+    aliases:
+    - BLINK
+  - name: GreenMotion Car Rental
+    aliases:
+    - GREENMOTION
+  - name: Routes Car Rental
+    aliases:
+    - ROUTES
+  - name: Discount Car and Truck Rentals
+    aliases:
+    - DISCOUNT CAR RENTAL
 bills_utilities/electric_gas:
   mcc: 4900
   channel: recurring
   merchants:
-    - {name: "PG&E", aliases: ["PGANDE"]}
-    - {name: "Con Edison", aliases: ["CONED"]}
-    - "Duke Energy"
-    - "Dominion Energy"
-    - "National Grid"
-    - {name: "Southern California Edison", aliases: ["SCE"]}
-
+  - name: PG&E
+    aliases:
+    - PGANDE
+  - name: Con Edison
+    aliases:
+    - CONED
+  - Duke Energy
+  - Dominion Energy
+  - National Grid
+  - name: Southern California Edison
+    aliases:
+    - SCE
+  - name: Xcel Energy
+    aliases:
+    - XCEL ENERGY
+  - Entergy
+  - Evergy
+  - Ameren
+  - name: CenterPoint Energy
+    aliases:
+    - CENTERPOINT ENRGY
+  - name: Eversource Energy
+    aliases:
+    - EVERSOURCE
+  - name: PECO Energy
+    aliases:
+    - PECO
+  - name: PPL Electric Utilities
+    aliases:
+    - PPL ELECTRIC
+  - name: APS (Arizona Public Service)
+    aliases:
+    - APS
+  - name: Salt River Project
+    aliases:
+    - SRP
+  - Pacific Power
+  - Rocky Mountain Power
+  - Ohio Edison
+  - Columbia Gas
+  - name: Piedmont Natural Gas
+    aliases:
+    - PIEDMONT NAT GAS
+  - name: Atmos Energy
+    aliases:
+    - ATMOS
+  - name: Spire Energy
+    aliases:
+    - SPIRE
+  - name: New Jersey Natural Gas
+    aliases:
+    - NJNG
+  - name: South Jersey Industries
+    aliases:
+    - SJI
+  - name: WPS (Wisconsin Public Service)
+    aliases:
+    - WPS
+  - We Energies
+  - name: DTE Energy
+    aliases:
+    - DTE
+  - Consumers Energy
+  - FirstEnergy
+  - Avangrid
+  - name: Tampa Electric
+    aliases:
+    - TECO
+  - name: Florida Power & Light
+    aliases:
+    - FPL
+  - Gulf Power
+  - name: Puget Sound Energy
+    aliases:
+    - PSE
+  - name: Portland General Electric
+    aliases:
+    - PGE
+  - NV Energy
+  - name: El Paso Electric
+    aliases:
+    - EPE
+  - name: Southwestern Public Service
+    aliases:
+    - SPS
+  - Cleco Power
 bills_utilities/water:
   mcc: 4900
   channel: recurring
   merchants:
-    - "EBMUD"
-    - "SFPUC"
-    - "City of Austin Water"
-    - "DC Water"
-    - "LADWP"
-    - "Aqua America"
-
+  - EBMUD
+  - SFPUC
+  - City of Austin Water
+  - DC Water
+  - LADWP
+  - Aqua America
+  - name: Philadelphia Water Department
+    aliases:
+    - PWD WATER
+  - Denver Water
+  - Phoenix Water Services
+  - name: San Antonio Water System
+    aliases:
+    - SAWS
+  - name: Seattle Public Utilities
+    aliases:
+    - SPU WATER
+  - Louisville Water Company
+  - Portland Water Bureau
+  - Columbus Division of Water
+  - Charlotte Water
+  - name: Memphis Light Gas and Water
+    aliases:
+    - MLGW
+  - Tucson Water
+  - name: San Jose Water Company
+    aliases:
+    - SJW
+  - name: American Water Works
+    aliases:
+    - American Water
+  - name: California American Water
+    aliases:
+    - Cal Am Water
+  - name: New Jersey American Water
+    aliases:
+    - NJ American Water
+  - name: Pennsylvania American Water
+    aliases:
+    - PA American Water
+  - Indiana American Water
+  - Illinois American Water
+  - Missouri American Water
+  - name: West Virginia American Water
+    aliases:
+    - WV American Water
+  - Connecticut Water
+  - name: SouthWest Water Company
+    aliases:
+    - SWWC
+  - Middlesex Water Company
+  - York Water Company
+  - Artesian Water Company
+  - Consolidated Water Company
+  - Veolia Water
+  - United Water
+  - Suez Water
+  - name: Birmingham Water Works
+    aliases:
+    - BWWB
+  - Milwaukee Water Works
+  - Cleveland Division of Water
+  - name: Detroit Water and Sewerage Department
+    aliases:
+    - DWSD
+  - name: New Orleans Sewerage and Water Board
+    aliases:
+    - SWBNO
 bills_utilities/internet_phone:
   mcc: 4814
   channel: recurring
   merchants:
-    - {name: "Comcast", aliases: ["XFINITY"]}
-    - "Verizon"
-    - {name: "AT&T", aliases: ["ATT"]}
-    - {name: "T-Mobile", aliases: ["TMOBILE"]}
-    - "Spectrum"
-    - "CenturyLink"
-
+  - name: Comcast
+    aliases:
+    - XFINITY
+  - Verizon
+  - name: AT&T
+    aliases:
+    - ATT
+  - name: T-Mobile
+    aliases:
+    - TMOBILE
+  - Spectrum
+  - CenturyLink
+  - name: Cox Communications
+    aliases:
+    - COX COMM
+  - name: Xfinity
+    aliases:
+    - XFNTY
+  - name: Dish Network
+    aliases:
+    - DISH NET
+  - name: DirecTV
+    aliases:
+    - DIRECTV
+  - name: Frontier Communications
+    aliases:
+    - FRONTIER COMM
+  - Optimum
+  - Altice USA
+  - Mediacom
+  - name: WOW Internet
+    aliases:
+    - WIDEOPENWEST
+  - Windstream
+  - name: Consolidated Communications
+    aliases:
+    - CONSOLIDATED COMM
+  - Lumen Technologies
+  - EarthLink
+  - HughesNet
+  - Viasat
+  - Starlink
+  - name: Google Fiber
+    aliases:
+    - GOOGLE FIBER
+  - name: Cricket Wireless
+    aliases:
+    - CRICKET WRLS
+  - name: Metro by T-Mobile
+    aliases:
+    - METRO PCS
+    - METROPCS
+  - name: Boost Mobile
+    aliases:
+    - BOOST MOBILE
+  - Consumer Cellular
+  - name: Straight Talk Wireless
+    aliases:
+    - STRAIGHT TALK
+  - TracFone
+  - name: US Cellular
+    aliases:
+    - USCELLULAR
+  - C Spire
+  - FirstNet
+  - Mint Mobile
+  - Visible
+  - Ting
+  - Republic Wireless
+  - Breezeline
+  - Astound Broadband
+  - RCN
+  - Atlantic Broadband
 bills_utilities/insurance:
   mcc: 6300
   channel: recurring
   merchants:
-    - "Geico"
-    - "State Farm"
-    - "Progressive"
-    - "Allstate"
-    - "Liberty Mutual"
-    - "Nationwide"
-
-# ---------------- subscriptions_entertainment ----------------
+  - Geico
+  - State Farm
+  - Progressive
+  - Allstate
+  - Liberty Mutual
+  - Nationwide
+  - USAA
+  - name: Farmers Insurance
+    aliases:
+    - FARMERS INS
+  - name: Travelers Insurance
+    aliases:
+    - TRAVELERS
+  - Aetna
+  - name: MetLife
+    aliases:
+    - METLIFE INS
+  - name: Prudential
+    aliases:
+    - PRUDENTIAL INS
+  - Anthem
+  - name: UnitedHealthcare
+    aliases:
+    - UHC
+  - Cigna
+  - Humana
+  - name: Blue Cross Blue Shield
+    aliases:
+    - BCBS
+  - name: AAA Insurance
+    aliases:
+    - AAA INS
+  - name: Mutual of Omaha
+    aliases:
+    - MUTUAL OMAHA
+  - name: New York Life
+    aliases:
+    - NY LIFE
+  - name: Northwestern Mutual
+    aliases:
+    - NWMUTUAL
+  - name: Erie Insurance
+    aliases:
+    - ERIE INS
+  - name: Hartford Financial Services
+    aliases:
+    - THE HARTFORD
+  - Aflac
+  - name: Lincoln Financial
+    aliases:
+    - LINCOLN FINL
+  - name: Principal Financial
+    aliases:
+    - PRINCIPAL FIN
+  - name: Sun Life Financial
+    aliases:
+    - SUN LIFE
+  - Unum
+  - Assurant
+  - name: American Family Insurance
+    aliases:
+    - AMFAM
+  - name: Kemper Insurance
+    aliases:
+    - KEMPER INS
+  - name: Auto-Owners Insurance
+    aliases:
+    - AUTO-OWNERS
+  - name: Sentry Insurance
+    aliases:
+    - SENTRY INS
+  - name: Shelter Insurance
+    aliases:
+    - SHELTER INS
+  - name: Cincinnati Financial
+    aliases:
+    - CINCINNATI FIN
+  - name: Mercury Insurance
+    aliases:
+    - MERCURY INS
+  - name: COUNTRY Financial
+    aliases:
+    - COUNTRY FIN
+  - name: Hanover Insurance
+    aliases:
+    - HANOVER INS
+  - name: Markel Insurance
+    aliases:
+    - MARKEL
+  - name: GuideOne Insurance
+    aliases:
+    - GUIDEONE
 subscriptions_entertainment/streaming:
   mcc: 5815
   channel: recurring
   merchants:
-    - "Netflix"
-    - "Spotify"
-    - "Hulu"
-    - {name: "Disney+", aliases: ["DISNEYPLUS"]}
-    - {name: "HBO Max", aliases: ["HBOMAX"]}
-    - "YouTube Premium"
-
+  - Netflix
+  - Spotify
+  - Hulu
+  - name: Disney+
+    aliases:
+    - DISNEYPLUS
+  - name: HBO Max
+    aliases:
+    - HBOMAX
+  - YouTube Premium
+  - name: Apple TV+
+    aliases:
+    - APPLE TV PLUS
+    - APL*TV+
+  - name: Peacock
+    aliases:
+    - PEACOCK TV
+    - NBCUNIVERSAL PEACOCK
+  - name: Paramount+
+    aliases:
+    - PARAMOUNT PLUS
+    - CBS ALL ACCESS
+  - name: Amazon Prime Video
+    aliases:
+    - AMZN PRIME VIDEO
+    - AMAZON PRIMEVIDEO
+  - name: ESPN+
+    aliases:
+    - ESPN PLUS
+    - ESPNPLUS
+  - Tubi
+  - Pluto TV
+  - name: Crunchyroll
+    aliases:
+    - CRUNCHYROLL LLC
+  - Funimation
+  - Shudder
+  - name: AMC+
+    aliases:
+    - AMC PLUS
+    - AMCPLUS
+  - name: Discovery+
+    aliases:
+    - DISCOVERY PLUS
+    - DISC+
+  - BritBox
+  - Acorn TV
+  - name: Starz
+    aliases:
+    - STARZ PLAY
+  - name: Showtime
+    aliases:
+    - SHO*
+    - SHOWTIME ANYT
+  - Mubi
+  - name: Criterion Channel
+    aliases:
+    - THE CRITERION CHANNEL
+  - name: Plex
+    aliases:
+    - PLEX INC
+  - Vudu
+  - name: Fandango at Home
+    aliases:
+    - FANDANGO@HOME
+  - Philo
+  - name: FuboTV
+    aliases:
+    - FUBO TV
+    - FUBOTV INC
+  - name: Sling TV
+    aliases:
+    - SLING MEDIA
+  - name: DirecTV Stream
+    aliases:
+    - DIRECTV STREAM
+    - DTV STREAM
+  - name: YouTube TV
+    aliases:
+    - YOUTUBETV
+  - name: Hulu Live TV
+    aliases:
+    - HULU LIVE
+  - Frndly TV
+  - name: ViX
+    aliases:
+    - VIX+
+    - TELEVISA VIX
+  - name: CuriosityStream
+    aliases:
+    - CURIOSITY STREAM
+  - name: Hallmark Movies Now
+    aliases:
+    - HALLMARK NOW
+  - Midnight Pulp
+  - Screambox
+  - name: Sundance Now
+    aliases:
+    - SUNDANCENOW
 subscriptions_entertainment/gaming:
   mcc: 5816
   channel: online
   merchants:
-    - {name: "Steam", aliases: ["STEAMGAMES"]}
-    - {name: "PlayStation Network", aliases: ["PSN"]}
-    - "Xbox Live"
-    - "Nintendo"
-    - "Epic Games"
-    - "Roblox"
-
+  - name: Steam
+    aliases:
+    - STEAMGAMES
+  - name: PlayStation Network
+    aliases:
+    - PSN
+  - Xbox Live
+  - Nintendo
+  - Epic Games
+  - Roblox
+  - name: EA Play
+    aliases:
+    - ELECTRONIC ARTS
+    - EA SPORTS
+  - name: Ubisoft+
+    aliases:
+    - UBISOFT PLUS
+  - Activision
+  - name: Blizzard Entertainment
+    aliases:
+    - BLIZZARD ENT
+    - BATTLE.NET
+  - name: Battle.net
+    aliases:
+    - BATTLENET
+  - name: Bethesda.net
+    aliases:
+    - BETHESDA SOFTWORKS
+  - name: Xbox Game Pass
+    aliases:
+    - XBOX GP
+    - MS GAME PASS
+  - name: PlayStation Plus
+    aliases:
+    - PS PLUS
+    - PSN PLUS
+  - name: Nintendo Switch Online
+    aliases:
+    - NINTENDO ONLINE
+    - NSO
+  - name: Apple Arcade
+    aliases:
+    - APPLE ARCADE SUB
+  - name: Google Play Pass
+    aliases:
+    - GOOGLE PLAY PASS
+  - name: Amazon Luna
+    aliases:
+    - AMZN LUNA
+  - name: NVIDIA GeForce Now
+    aliases:
+    - NVIDIA GFN
+    - GEFORCE NOW
+  - name: Shadow PC
+    aliases:
+    - SHADOW CLOUD GAMING
+  - Boosteroid
+  - name: Humble Bundle
+    aliases:
+    - HUMBLE MONTHLY
+    - HUMBLE CHOICE
+  - Fanatical
+  - name: GOG.com
+    aliases:
+    - GOG GALAXY
+  - Itch.io
+  - GameFly
+  - name: Pogo
+    aliases:
+    - EA POGO
+    - POGO GAMES
+  - WildTangent
+  - name: Twitch
+    aliases:
+    - TWITCH INTERACTIVE
+    - TWITCH SUB
+  - name: Discord Nitro
+    aliases:
+    - DISCORD INC
+    - DISCORD NITRO SUB
+  - VRV
+  - Retroarch
+  - Antstream Arcade
+  - Utomik
+  - Blacknut
+  - name: Vortex Cloud Gaming
+    aliases:
+    - VORTEX CG
+  - PlayVS
 subscriptions_entertainment/events:
   mcc: 7922
   channel: online
   merchants:
-    - "Ticketmaster"
-    - "StubHub"
-    - "Live Nation"
-    - "AXS"
-    - "Eventbrite"
-    - "SeatGeek"
-
+  - Ticketmaster
+  - StubHub
+  - Live Nation
+  - AXS
+  - Eventbrite
+  - SeatGeek
+  - Vivid Seats
+  - StubHub International
+  - Viagogo
+  - name: Dice FM
+    aliases:
+    - DICE
+  - Bandsintown
+  - Songkick
+  - TicketWeb
+  - Eventim
+  - Tickets.com
+  - name: Front Gate Tickets
+    aliases:
+    - FRONT GATE TCKTS
+  - TicketSmarter
+  - name: Box Office Ticket Sales
+    aliases:
+    - BOX OFC TCKTS
+  - ShowClix
+  - Prekindle
+  - Ticket Tailor
+  - name: Universe Ticketing
+    aliases:
+    - UNIVERSE TKTG
+  - TicketLeap
+  - Tixr
+  - Admission
+  - name: Patron Technology
+    aliases:
+    - PATRON TECH
+  - name: Brown Paper Tickets
+    aliases:
+    - BRN PAPER TCKTS
+  - TicketSocket
+  - Growtix
+  - RegFox
+  - Splash
+  - Accelevents
+  - Bizzabo
+  - Hopin
+  - Cvent
+  - Whova
+  - name: Luma Events
+    aliases:
+    - LU.MA
+  - Partiful
+  - RSVPIFY
+  - name: Goldstar Events
+    aliases:
+    - GOLDSTAR
 subscriptions_entertainment/software:
   mcc: 5734
   channel: recurring
   merchants:
-    - "Adobe"
-    - "Microsoft"
-    - "Dropbox"
-    - "Notion"
-    - "Slack"
-    - "Zoom"
-
-# ---------------- health_wellness ----------------
+  - Adobe
+  - Microsoft
+  - Dropbox
+  - Notion
+  - Slack
+  - Zoom
+  - GitHub
+  - Figma
+  - Canva
+  - Squarespace
+  - Wix
+  - Grammarly
+  - Evernote
+  - LastPass
+  - name: 1Password
+    aliases:
+    - 1PSWD
+  - NordVPN
+  - ExpressVPN
+  - Malwarebytes
+  - name: Norton
+    aliases:
+    - NRT LIFELOCK
+  - McAfee
+  - Dashlane
+  - Calm
+  - Headspace
+  - Duolingo
+  - name: Rosetta Stone
+    aliases:
+    - ROSETTA STN
+  - name: Audible
+    aliases:
+    - AUDIBLE IN
+  - Scribd
+  - Skillshare
+  - Coursera
+  - name: LinkedIn Learning
+    aliases:
+    - LINKEDIN LRN
 health_wellness/pharmacy:
   mcc: 5912
   channel: card_present
   merchants:
-    - {name: "CVS", aliases: ["CVS PHARMACY"]}
-    - "Walgreens"
-    - "Rite Aid"
-    - "Duane Reade"
-    - "GoodRx"
-    - "Costco Pharmacy"
-
+  - name: CVS
+    aliases:
+    - CVS PHARMACY
+  - Walgreens
+  - Rite Aid
+  - Duane Reade
+  - GoodRx
+  - Costco Pharmacy
+  - name: Walmart Pharmacy
+    aliases:
+    - WAL-MART PHCY
+    - WALMART PHCY
+  - name: Kroger Pharmacy
+    aliases:
+    - KROGER PHCY
+  - name: Publix Pharmacy
+    aliases:
+    - PUBLIX PHCY
+  - name: Safeway Pharmacy
+    aliases:
+    - SAFEWAY PHCY
+  - name: Albertsons Pharmacy
+    aliases:
+    - ALBERTSONS PHCY
+  - name: Target Pharmacy
+    aliases:
+    - TARGET PHCY
+  - name: Sam's Club Pharmacy
+    aliases:
+    - SAMS CLUB PHCY
+  - name: H-E-B Pharmacy
+    aliases:
+    - HEB PHCY
+  - name: Meijer Pharmacy
+    aliases:
+    - MEIJER PHCY
+  - name: Wegmans Pharmacy
+    aliases:
+    - WEGMANS PHCY
+  - name: Hy-Vee Pharmacy
+    aliases:
+    - HYVEE PHCY
+  - name: Winn-Dixie Pharmacy
+    aliases:
+    - WINN DIXIE PHCY
+  - name: Giant Food Pharmacy
+    aliases:
+    - GIANT PHCY
+  - name: Stop & Shop Pharmacy
+    aliases:
+    - STOP AND SHOP PHCY
+  - name: Hannaford Pharmacy
+    aliases:
+    - HANNAFORD PHCY
+  - Kinney Drugs
+  - Harmons Pharmacy
+  - Fruth Pharmacy
+  - Lewis Drug
+  - Bartell Drugs
+  - Harco Drug
+  - name: Medicine Shoppe Pharmacy
+    aliases:
+    - MEDICINE SHOPPE
+  - name: Health Mart Pharmacy
+    aliases:
+    - HEALTH MART PHCY
+  - name: Good Neighbor Pharmacy
+    aliases:
+    - GNP PHCY
+  - Diplomat Pharmacy
+  - name: Genoa Healthcare Pharmacy
+    aliases:
+    - GENOA PHCY
+  - PillPack
+  - Capsule Pharmacy
+  - NowRx
+  - Alto Pharmacy
+  - Blink Health
+  - name: Optum Rx
+    aliases:
+    - OPTUMRX
+  - name: Express Scripts Pharmacy
+    aliases:
+    - EXPRESS SCRIPTS
+    - ESI PHCY
+  - name: Magellan Rx Pharmacy
+    aliases:
+    - MAGELLAN RX
 health_wellness/medical:
   mcc: 8011
   channel: card_present
   merchants:
-    - "Quest Diagnostics"
-    - "LabCorp"
-    - {name: "Kaiser Permanente", aliases: ["KAISER"]}
-    - "One Medical"
-    - "Concentra"
-    - "CityMD"
-
+  - Quest Diagnostics
+  - LabCorp
+  - name: Kaiser Permanente
+    aliases:
+    - KAISER
+  - One Medical
+  - Concentra
+  - CityMD
+  - name: CVS MinuteClinic
+    aliases:
+    - CVS MINUTECLINIC
+    - MINUTECLINIC
+  - name: Walgreens Health Clinic
+    aliases:
+    - WLGRNS HLTH
+  - name: MedExpress Urgent Care
+    aliases:
+    - MEDEXPRESS UC
+  - name: AFC Urgent Care
+    aliases:
+    - AFC UC
+  - name: NextCare Urgent Care
+    aliases:
+    - NEXTCARE UC
+  - name: GoHealth Urgent Care
+    aliases:
+    - GOHEALTH UC
+  - Labcorp Patient
+  - name: BioReference Laboratories
+    aliases:
+    - BIOREF LAB
+  - name: Sonora Quest Laboratories
+    aliases:
+    - SONORA QUEST
+  - name: DaVita Kidney Care
+    aliases:
+    - DAVITA
+  - name: Fresenius Medical Care
+    aliases:
+    - FRESENIUS MC
+  - name: American Family Care
+    aliases:
+    - AFC
+  - name: FastMed Urgent Care
+    aliases:
+    - FASTMED UC
+  - Physicians Immediate Care
+  - Midwest Express Clinic
+  - name: Carenow Urgent Care
+    aliases:
+    - CARENOW
+  - Urgent Care for Children
+  - Premise Health
+  - Oak Street Health
+  - Crossover Health
+  - Agiliti Health
+  - name: MD Now Urgent Care
+    aliases:
+    - MD NOW
+  - name: U.S. HealthWorks
+    aliases:
+    - USHEALTHWORKS
+  - OccuMed
+  - name: WorkCare Occupational Health
+    aliases:
+    - WORKCARE
+  - Pivot Onsite Innovations
+  - CRH Healthcare
+  - Emerald Coast Urgent Care
+  - Banner Urgent Care
+  - name: Intermountain InstaCare
+    aliases:
+    - INSTACAREUC
+  - name: Johns Hopkins Community Physicians
+    aliases:
+    - JHCP
+  - name: Cleveland Clinic Express Care
+    aliases:
+    - CC EXPRESS
+  - name: Mayo Clinic Express Care
+    aliases:
+    - MAYO EXPRESS
+  - Atrius Health
 health_wellness/fitness:
   mcc: 7997
   channel: recurring
   merchants:
-    - "Planet Fitness"
-    - "LA Fitness"
-    - "Equinox"
-    - "24 Hour Fitness"
-    - "Crunch Fitness"
-    - "Orangetheory"
-
-# ---------------- financial (bank-feed; mcc often null) ----------------
+  - Planet Fitness
+  - LA Fitness
+  - Equinox
+  - 24 Hour Fitness
+  - Crunch Fitness
+  - Orangetheory
+  - Anytime Fitness
+  - name: Gold's Gym
+    aliases:
+    - GOLDS GYM
+  - name: YMCA
+    aliases:
+    - THE Y
+    - YMCA OF THE USA
+  - CrossFit
+  - SoulCycle
+  - Pure Barre
+  - name: Barry's Bootcamp
+    aliases:
+    - BARRYS BOOTCAMP
+  - name: F45 Training
+    aliases:
+    - F45
+  - Burn Boot Camp
+  - Blink Fitness
+  - Snap Fitness
+  - 9Round
+  - Club Pilates
+  - name: CorePower Yoga
+    aliases:
+    - COREPOWER
+  - name: Yoga Works
+    aliases:
+    - YOGAWORKS
+  - name: Lifetime Fitness
+    aliases:
+    - LIFE TIME
+    - LTF
+  - Planet Muscle
+  - name: Solid Core
+    aliases:
+    - '[solidcore]'
+  - Rumble Boxing
+  - Cyclebar
+  - Row House
+  - StretchLab
+  - AKT
+  - Title Boxing Club
+  - UFC Gym
+  - name: EōS Fitness
+    aliases:
+    - EOS FITNESS
+  - Workout Anytime
+  - Retro Fitness
+  - Edge Fitness Clubs
+  - Chuze Fitness
+  - name: YouFit Gyms
+    aliases:
+    - YOUFIT
+  - XSport Fitness
+  - Mountainside Fitness
+  - name: In-Shape Health Clubs
+    aliases:
+    - IN-SHAPE
 financial/bank_fee:
   mcc: null
   channel: financial
   merchants:
-    - "Monthly Maintenance Fee"
-    - "Overdraft Fee"
-    - "ATM Fee"
-    - "Foreign Transaction Fee"
-    - "Late Payment Fee"
-    - "Service Charge"
-
+  - Monthly Maintenance Fee
+  - Overdraft Fee
+  - ATM Fee
+  - Foreign Transaction Fee
+  - Late Payment Fee
+  - Service Charge
+  - Account Research Fee
+  - name: ACH Return Fee
+    aliases:
+    - ACH RTN FEE
+  - Annual Fee
+  - Balance Inquiry Fee
+  - Card Replacement Fee
+  - name: Cashier Check Fee
+    aliases:
+    - CASHIERS CHK FEE
+  - Chargeback Fee
+  - Check Image Fee
+  - Check Order Fee
+  - name: Check Return Fee
+    aliases:
+    - CHK RTN FEE
+  - Closing Fee
+  - Collection Fee
+  - name: Currency Conversion Fee
+    aliases:
+    - CURR CONV FEE
+  - name: Deposit Item Returned Fee
+    aliases:
+    - DEP ITEM RTN FEE
+  - Dormant Account Fee
+  - name: Electronic Transfer Fee
+    aliases:
+    - ELEC XFER FEE
+  - name: Excess Transaction Fee
+    aliases:
+    - EXCESS TRANS FEE
+  - Expedited Payment Fee
+  - name: Extended Overdraft Fee
+    aliases:
+    - EXT OD FEE
+  - name: Incoming Wire Fee
+    aliases:
+    - INCMG WIRE FEE
+  - name: Insufficient Funds Fee
+    aliases:
+    - NSF FEE
+  - Intrabank Transfer Fee
+  - Legal Process Fee
+  - name: Minimum Balance Fee
+    aliases:
+    - MIN BAL FEE
+  - Money Order Fee
+  - Notary Fee
+  - Online Banking Fee
+  - name: Outgoing Wire Fee
+    aliases:
+    - OUTG WIRE FEE
+  - Paper Statement Fee
+  - name: Periodic Maintenance Charge
+    aliases:
+    - PER MAINT CHG
+  - name: Returned Payment Fee
+    aliases:
+    - RTN PMT FEE
+  - name: Safe Deposit Box Fee
+    aliases:
+    - SDB FEE
+  - name: Stop Payment Fee
+    aliases:
+    - STP PMT FEE
+  - Sweep Transfer Fee
 financial/atm_cash:
   mcc: 6011
   channel: financial
   merchants:
-    - "ATM Withdrawal"
-    - "Cash Withdrawal"
-    - "Chase ATM"
-    - "Bank of America ATM"
-    - "Wells Fargo ATM"
-    - "ATM Cash Advance"
-
+  - ATM Withdrawal
+  - Cash Withdrawal
+  - Chase ATM
+  - Bank of America ATM
+  - Wells Fargo ATM
+  - ATM Cash Advance
+  - Citibank ATM
+  - US Bank ATM
+  - PNC ATM
+  - TD Bank ATM
+  - Capital One ATM
+  - Regions ATM
+  - SunTrust ATM
+  - name: Fifth Third ATM
+    aliases:
+    - 5/3 ATM
+  - KeyBank ATM
+  - Truist ATM
+  - Huntington ATM
+  - ATM Fee Surcharge
+  - Foreign ATM Withdrawal
+  - Out of Network ATM
+  - ATM Disbursement
+  - Teller Cash Withdrawal
+  - Branch Cash Withdrawal
+  - Counter Withdrawal
+  - ATM Debit Withdrawal
+  - Checking Account Withdrawal
+  - Savings Withdrawal
+  - Cash Back Purchase
+  - name: Point of Sale Cash Back
+    aliases:
+    - POS Cash Back
+  - Allpoint ATM
+  - MoneyPass ATM
+  - Cardtronics ATM
+  - Nautilus Hyosung ATM
+  - NCR ATM
+  - Diebold ATM
+  - 7-Eleven ATM
+  - Walgreens ATM
+  - CVS ATM
+  - Visa Cash Advance
+  - Mastercard Cash Advance
 financial/interest:
   mcc: null
   channel: financial
   merchants:
-    - "Interest Charge"
-    - "Interest Payment"
-    - "Credit Interest"
-    - "Savings Interest"
-    - "Finance Charge"
-    - "Purchase Interest"
-
+  - Interest Charge
+  - Interest Payment
+  - Credit Interest
+  - Savings Interest
+  - Finance Charge
+  - Purchase Interest
+  - Interest Charged
+  - Debit Interest
+  - name: Overdraft Interest
+    aliases:
+    - OD INT
+  - Loan Interest
+  - name: Mortgage Interest
+    aliases:
+    - MTGE INT
+  - Daily Interest Charge
+  - Monthly Interest
+  - Annual Interest Charge
+  - Interest Accrued
+  - Accrued Interest Charge
+  - name: Cash Advance Interest
+    aliases:
+    - CA INT
+  - name: Balance Transfer Interest
+    aliases:
+    - BT INT
+  - Revolving Credit Interest
+  - Instalment Interest
+  - Term Loan Interest
+  - Personal Loan Interest
+  - Auto Loan Interest
+  - Student Loan Interest
+  - name: Line of Credit Interest
+    aliases:
+    - LOC INT
+  - Credit Line Interest
+  - Compound Interest Charge
+  - Interest on Arrears
+  - Late Payment Interest
+  - Past Due Interest
+  - Penalty Interest
+  - Default Interest
+  - Promotional Rate Interest
+  - Deferred Interest Charge
+  - name: Interest Adjustment
+    aliases:
+    - INT ADJ
+  - Interest Reversal
+  - Interest Credit Adjustment
+  - Net Interest Charge
+  - Periodic Interest Charge
+  - Fixed Rate Interest
 financial/investment:
   mcc: 6211
   channel: financial
   merchants:
-    - "Robinhood"
-    - "Fidelity"
-    - {name: "Charles Schwab", aliases: ["SCHWAB"]}
-    - "Vanguard"
-    - {name: "E*TRADE", aliases: ["ETRADE"]}
-    - "Coinbase"
-
-# ---------------- transfers ----------------
+  - Robinhood
+  - Fidelity
+  - name: Charles Schwab
+    aliases:
+    - SCHWAB
+  - Vanguard
+  - name: E*TRADE
+    aliases:
+    - ETRADE
+  - Coinbase
+  - name: TD Ameritrade
+    aliases:
+    - TDAMERITRADE
+    - TDA
+  - name: Interactive Brokers
+    aliases:
+    - IBKR
+    - INTERACTIVEBROKERS
+  - name: Merrill Lynch
+    aliases:
+    - MERRILLEDGE
+    - ML
+  - Wealthfront
+  - Betterment
+  - Acorns Invest
+  - Stash Invest
+  - name: Public.com
+    aliases:
+    - PUBLIC COM
+  - name: SoFi Invest
+    aliases:
+    - SOFI INVEST
+  - Webull
+  - Ally Invest
+  - name: M1 Finance
+    aliases:
+    - M1 FINANCE
+  - name: Tastytrade
+    aliases:
+    - TASTYWORKS
+  - Firstrade
+  - TradeStation
+  - Moomoo
+  - name: Gemini Crypto
+    aliases:
+    - GEMINI
+  - name: Kraken Exchange
+    aliases:
+    - KRAKEN
+  - name: Binance US
+    aliases:
+    - BINANCEUS
+  - eToro
+  - name: Grayscale Investments
+    aliases:
+    - GBTC PURCHASE
+  - Fundrise
+  - Yieldstreet
+  - Crowdstreet
+  - Arrived Homes
+  - name: Masterworks Fine Art
+    aliases:
+    - MASTERWORKS
+  - name: Rally Road
+    aliases:
+    - RALLY
+  - BlockFi
+  - name: Celsius Network
+    aliases:
+    - CELSIUS
+  - Nexo
+  - name: Titan Invest
+    aliases:
+    - TITAN
+  - Ellevest
+  - Axos Invest
+  - Motif Investing
 transfers/p2p:
   mcc: 4829
   channel: financial
   merchants:
-    - "Venmo"
-    - "Zelle"
-    - {name: "Cash App", aliases: ["CASHAPP"]}
-    - {name: "PayPal", aliases: ["PYPL"]}
-    - "Apple Cash"
-    - "Google Pay"
-
+  - Venmo
+  - Zelle
+  - name: Cash App
+    aliases:
+    - CASHAPP
+  - name: PayPal
+    aliases:
+    - PYPL
+  - Apple Cash
+  - Google Pay
+  - ACH Transfer To
+  - ACH Transfer From
+  - External Transfer Out
+  - External Transfer In
+  - Online Transfer To Account
+  - Online Transfer From Account
+  - P2P Payment Sent
+  - P2P Payment Received
+  - name: Wire Transfer Out
+    aliases:
+    - WIRE OUT
+  - name: Wire Transfer In
+    aliases:
+    - WIRE IN
+  - Domestic Wire Sent
+  - Domestic Wire Received
+  - Instant Transfer Sent
+  - Instant Transfer Received
+  - Bank to Bank Transfer
+  - Interbank Transfer
+  - Personal Payment Sent
+  - Personal Payment Received
+  - Friend Payment
+  - Transfer from Savings
+  - Transfer from Checking
+  - name: Funds Transfer Debit
+    aliases:
+    - FT DEB
+  - name: Funds Transfer Credit
+    aliases:
+    - FT CR
+  - Mobile Transfer Out
+  - Mobile Transfer In
+  - Zelle Instant Payment
+  - Peer Transfer Sent
+  - Peer Transfer Received
+  - Bill Split Payment
+  - Shared Expense Transfer
+  - Remittance Transfer
+  - name: Direct Transfer Debit
+    aliases:
+    - DIR XFER DB
+  - name: Direct Transfer Credit
+    aliases:
+    - DIR XFER CR
 transfers/internal:
   mcc: null
   channel: financial
   merchants:
-    - "Transfer to Savings"
-    - "Transfer to Checking"
-    - "Internal Transfer"
-    - "Online Transfer"
-    - "Account Transfer"
-    - "Move Money"
-
+  - Transfer to Savings
+  - Transfer to Checking
+  - Internal Transfer
+  - Online Transfer
+  - Account Transfer
+  - Move Money
+  - Transfer to Money Market
+  - Transfer to Investment Account
+  - Transfer to Joint Account
+  - Transfer to Business Account
+  - Transfer to Secondary Account
+  - name: Funds Transfer
+    aliases:
+    - FDS XFER
+  - Balance Transfer
+  - Sweep Transfer
+  - name: Automatic Transfer
+    aliases:
+    - AUTO XFER
+  - name: Scheduled Transfer
+    aliases:
+    - SCHED XFER
+  - name: Recurring Transfer
+    aliases:
+    - RECUR XFER
+  - name: Book Transfer
+    aliases:
+    - BK XFER
+  - Same Day Transfer
+  - Next Day Transfer
+  - Between Accounts Transfer
+  - Move Funds
+  - Funds Movement
+  - name: Account to Account Transfer
+    aliases:
+    - ACCT TO ACCT
+  - Transfer to IRA
+  - Transfer to CD Account
+  - Transfer to HSA
+  - Transfer to Brokerage
+  - Transfer to Reserve Account
+  - Transfer to Overdraft Account
+  - Transfer to Line of Credit
+  - Transfer to Loan Account
+  - Intrabank Transfer
+  - Deposit Transfer
+  - name: Customer Initiated Transfer
+    aliases:
+    - CUST INIT XFER
+  - Branch Transfer
+  - Mobile Transfer
 transfers/wire:
   mcc: 4829
   channel: financial
   merchants:
-    - "Wire Transfer"
-    - "Outgoing Wire"
-    - "Incoming Wire"
-    - "Domestic Wire"
-    - "International Wire"
-    - "Wire Out"
-
-# ---------------- income ----------------
+  - Wire Transfer
+  - Outgoing Wire
+  - Incoming Wire
+  - Domestic Wire
+  - International Wire
+  - Wire Out
+  - Wire Transfer Credit
+  - Wire Transfer Debit
+  - Outgoing Wire Transfer
+  - Incoming Wire Transfer
+  - Wire Funds Transfer
+  - Wire Remittance
+  - Wire Payment
+  - Wire Receipt
+  - Wire Transfer Fee
+  - name: Fedwire Transfer
+    aliases:
+    - FEDWIRE
+  - name: SWIFT Wire Transfer
+    aliases:
+    - SWIFT
+  - SWIFT Payment
+  - Interbank Wire
+  - Bank Wire Transfer
+  - Wire Transfer Received
+  - Wire Transfer Sent
+  - Beneficiary Wire
+  - Originator Wire
+  - Wire Transfer Return
+  - Returned Wire Transfer
+  - Wire Credit Received
+  - Wire Debit Sent
+  - Outbound Wire
+  - Inbound Wire
+  - Foreign Wire Transfer
+  - Cross-Border Wire
+  - Wire Transfer Reversal
+  - Wire Transfer Correction
+  - Same-Day Wire
+  - Wire Transfer Confirmation
+  - Corporate Wire Transfer
+  - Personal Wire Transfer
+  - Wire Transfer Settlement
 income/payroll:
   mcc: null
   channel: financial
   merchants:
-    - "Direct Deposit"
-    - "Payroll"
-    - "Salary Deposit"
-    - {name: "ADP Payroll", aliases: ["ADP"]}
-    - {name: "Gusto Payroll", aliases: ["GUSTO"]}
-    - "Company Payroll"
-
+  - Direct Deposit
+  - Payroll
+  - Salary Deposit
+  - name: ADP Payroll
+    aliases:
+    - ADP
+  - name: Gusto Payroll
+    aliases:
+    - GUSTO
+  - Company Payroll
+  - Payroll Deposit
+  - Employer Direct Deposit
+  - name: Paychex Payroll
+    aliases:
+    - PAYCHEX
+  - Payroll Credit
+  - Wage Payment
+  - Bi-Weekly Payroll
+  - Weekly Payroll Deposit
+  - Semi-Monthly Payroll
+  - Monthly Salary Credit
+  - Net Pay Deposit
+  - Employee Net Pay
+  - Payroll EFT
+  - Wages Deposit
+  - Regular Pay Deposit
+  - Payroll ACH Credit
+  - ACH Payroll Credit
+  - Payroll Direct
+  - Intuit Payroll
+  - name: QuickBooks Payroll
+    aliases:
+    - QB PAYROLL
+  - name: Ceridian Payroll
+    aliases:
+    - CERIDN
+  - Kronos Payroll
+  - Workday Payroll
+  - Bamboo Payroll
+  - Rippling Payroll
+  - Hourly Pay Deposit
+  - Salary Credit
+  - Contract Pay Deposit
+  - Staff Payroll Deposit
+  - Corporate Payroll
+  - Employer Payroll Credit
+  - Payroll Transfer
+  - Pay Period Deposit
+  - Biweekly Wages
+  - Tip Payout Deposit
 income/refund:
   mcc: null
   channel: financial
   merchants:
-    - "Tax Refund"
-    - {name: "IRS Refund", aliases: ["IRS TREAS 310"]}
-    - "Merchant Refund"
-    - "Return Refund"
-    - "State Tax Refund"
-    - "Purchase Refund"
-
+  - Tax Refund
+  - name: IRS Refund
+    aliases:
+    - IRS TREAS 310
+  - Merchant Refund
+  - Return Refund
+  - State Tax Refund
+  - Purchase Refund
+  - Federal Tax Refund
+  - name: IRS Tax Refund
+    aliases:
+    - IRS TAX REF
+  - name: US Treasury Tax Refund
+    aliases:
+    - US TREAS TAX REF
+  - Overpayment Refund
+  - Credit Card Refund
+  - Online Purchase Refund
+  - name: Subscription Refund
+    aliases:
+    - SUBSCR REFUND
+  - name: Billing Adjustment Refund
+    aliases:
+    - BILL ADJ REF
+  - name: Duplicate Charge Refund
+    aliases:
+    - DUP CHG REF
+  - name: Cancelled Order Refund
+    aliases:
+    - CANCEL ORD REF
+  - Price Match Refund
+  - name: Chargeback Credit
+    aliases:
+    - CHGBK CR
+  - name: Dispute Resolution Credit
+    aliases:
+    - DISPT RESOL CR
+  - name: Insurance Claim Refund
+    aliases:
+    - INS CLM REF
+  - name: Medical Claim Refund
+    aliases:
+    - MED CLM REF
+  - Pharmacy Refund
+  - name: Utility Deposit Refund
+    aliases:
+    - UTIL DEP REF
+  - name: Security Deposit Refund
+    aliases:
+    - SEC DEP REF
+  - name: Rental Deposit Refund
+    aliases:
+    - RENT DEP REF
+  - Property Tax Refund
+  - County Tax Refund
+  - Local Tax Refund
+  - Sales Tax Refund
+  - Excise Tax Refund
+  - name: Vehicle Registration Refund
+    aliases:
+    - VEH REG REF
+  - name: DMV Overpayment Refund
+    aliases:
+    - DMV OVPMT REF
+  - Court Fee Refund
+  - name: Government Overpayment Refund
+    aliases:
+    - GOVT OVPMT REF
+  - Tuition Refund
+  - name: Financial Aid Refund
+    aliases:
+    - FIN AID REF
+  - Student Fee Refund
+  - name: Airline Ticket Refund
+    aliases:
+    - AIR TKT REF
+  - name: Hotel Reservation Refund
+    aliases:
+    - HTL RES REF
+  - name: Travel Booking Refund
+    aliases:
+    - TRVL BKG REF
 income/deposit:
   mcc: null
   channel: financial
   merchants:
-    - "Mobile Deposit"
-    - "Check Deposit"
-    - "Cash Deposit"
-    - "Remote Deposit"
-    - "Branch Deposit"
-    - "ATM Deposit"
+  - Mobile Deposit
+  - Check Deposit
+  - Cash Deposit
+  - Remote Deposit
+  - Branch Deposit
+  - ATM Deposit
+  - name: ACH Deposit
+    aliases:
+    - ACH DEP
+  - name: Zelle Payment Received
+    aliases:
+    - ZELLE PMNT RCV
+  - Venmo Credit
+  - name: PayPal Transfer
+    aliases:
+    - PAYPAL XFER
+  - name: Tax Refund Deposit
+    aliases:
+    - TAX RFND DEP
+  - name: Government Benefit Payment
+    aliases:
+    - GOVT BNFT PMT
+  - name: Social Security Payment
+    aliases:
+    - SSA TREAS
+  - name: Unemployment Benefits Deposit
+    aliases:
+    - UNEMP BNFT DEP
+  - name: Stimulus Payment
+    aliases:
+    - STIM PMT
+  - name: Interest Credit
+    aliases:
+    - INT CR
+  - name: Dividend Credit
+    aliases:
+    - DIV CR
+  - name: Savings Interest Paid
+    aliases:
+    - SAV INT PD
+  - name: Refund Credit
+    aliases:
+    - RFND CR
+  - name: Insurance Claim Payment
+    aliases:
+    - INS CLM PMT
+  - name: Cashback Reward Credit
+    aliases:
+    - CSHBK RWD CR
+  - Bonus Credit
+  - name: Employer Reimbursement
+    aliases:
+    - EMPL REIMB
+  - name: Expense Reimbursement
+    aliases:
+    - EXP REIMB
+  - name: Rental Income Deposit
+    aliases:
+    - RENT INC DEP
+  - name: Freelance Payment Received
+    aliases:
+    - FRLNC PMT RCV
+  - name: Settlement Payment
+    aliases:
+    - STTLMT PMT
+  - name: Court Settlement Deposit
+    aliases:
+    - CRT STTLMT DEP
+  - name: Child Support Payment
+    aliases:
+    - CHLD SUP PMT
+  - Alimony Deposit
+  - name: Pension Payment
+    aliases:
+    - PNSN PMT
+  - name: Retirement Distribution
+    aliases:
+    - RET DIST
+  - name: Annuity Payment
+    aliases:
+    - ANNTY PMT
+  - name: Scholarship Deposit
+    aliases:
+    - SCHLRSHP DEP
+  - name: Grant Disbursement
+    aliases:
+    - GRNT DISB
+  - name: Trust Distribution
+    aliases:
+    - TRUST DIST
+  - name: Foreign Wire Credit
+    aliases:
+    - FRGN WIRE CR

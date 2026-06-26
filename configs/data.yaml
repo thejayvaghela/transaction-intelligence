@@ -7,7 +7,7 @@ gazetteer: data/gazetteer/gazetteer.yaml
 out_dir: data/processed
 
 # Descriptor synthesis
-rows_per_merchant: 60          # descriptor variants generated per merchant
+rows_per_merchant: 20          # descriptor variants per merchant (diversity now comes from ~1.5k merchants)
 noise_level: 1.0              # scales transform aggressiveness (0=clean .. >1=harsher)
 
 # Leakage-safe splitting (by merchant group), stratified by subtype

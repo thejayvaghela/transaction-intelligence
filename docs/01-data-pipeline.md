@@ -84,9 +84,11 @@ are in [decisions/0004-synthetic-first-data.md](decisions/0004-synthetic-first-d
 ### 4.1 Merchant gazetteer
 A curated table seeding ground truth. Each row: canonical merchant, **surface-form aliases**
 (`amazon` → `AMZN`, `AMAZON.COM`, `AMZN MKTP US`), `category`, `subtype`, a typical **MCC**, and a
-**channel** (card-present / online / recurring) that influences the descriptor format. Seeded by
-hand to cover **all 40 subtypes** (a few hundred merchants); optionally expanded once, offline, with
-an LLM for breadth. Stored committed at `data/gazetteer/` (small + curated, like the gold set).
+**channel** (card-present / online / recurring) that influences the descriptor format. **~1,555 merchants
+(24–40/subtype)**: a hand-curated seed (6/subtype) **plus an LLM-generated expansion** — the
+`expand-gazetteer` workflow (40 parallel agents, one per subtype), merged + deduped by
+`scripts/merge_gazetteer.py`. This diversity is what lets a model generalize to unseen merchants
+(see §9 and [02-baselines](02-baselines.md)). Stored committed at `data/gazetteer/`.
 
 ### 4.2 Descriptor synthesizer (the noise model) — the heart of Phase 1
 Turns one gazetteer entry into a realistic descriptor by composing **probabilistic transforms**,
@@ -185,20 +187,26 @@ check that the noise model looks real.
 
 ## 9. Results / metrics
 
-Built with `make data` (seed `20260626`, `noise_level=1.0`, 60 rows/merchant). Full
+Built with `make data` (seed `20260626`, `noise_level=1.0`, 20 rows/merchant). Full
 [dataset card](../data/dataset_card.md).
 
-- **14,400 rows · 240 merchants · 11 categories / 40 subtypes.**
-- Splits (by merchant group): train 9,600 / 160 · val 2,400 / 40 · test 2,400 / 40.
-- Descriptor length: min 2 / median 18 / max 55. Unique descriptors in train: 63.9%. Debits: 87.6%.
-- Category share 7.5%–12.5% (driven by #subtypes/category) → mild imbalance; headline metric is
+- **31,100 rows · 1,555 merchants · 11 categories / 40 subtypes** (24–40 merchants/subtype after
+  the LLM expansion; see §4.1).
+- Splits (by merchant group): train 21,660 / 1,083 · val 4,720 / 236 · test 4,720 / 236.
+- Descriptor length: min 2 / median 20 / max 70. Unique descriptors in train: 77.6%. Debits: 87.4%.
+- Category share 7.3%–12.7% (driven by #subtypes/category) → mild imbalance; headline metric is
   macro-F1.
 - Sample descriptors: `SQ *STARBUCKS PORTLAND OR`, `WHOLEFDS ATLANTA GA`, `PP*AMZN MKTP US`,
   `DIRECT DEPOSIT REF#520521`, `POS DEBIT WIRE TRANSFER 11/27`.
-- **Gold set:** 120 hand-authored rows (3/subtype, all 40 covered); **48% unseen merchants**, 11
-  credits, 7 flagged edge cases; only 6/120 appear verbatim in train. Committed at `data/gold/`.
-- **Rules-only floor** (weak labeler on gold, no MCC): fires on **50%** of rows at **97%** category
-  & subtype accuracy, but **abstains on the other 50%** — the gap the learned model must close.
+- **Gold set:** 120 hand-authored rows (3/subtype, all 40 covered), 11 credits, 7 flagged edge
+  cases. Committed at `data/gold/`. (After the gazetteer expansion, more gold merchants are now
+  "known", so the `test` split is the cleaner unseen-merchant measure.)
+- **Rules-only floor** (weak labeler on gold): now **79% coverage @ 99% precision** (rose with the
+  bigger gazetteer); full rules-vs-learned comparison in [02-baselines §9](02-baselines.md).
+
+> **Diversity matters:** the first build used a flat 6 merchants/subtype, and the baseline couldn't
+> generalize across the merchant split (gold subtype macro-F1 0.27). Expanding to 24–40/subtype
+> lifted it to **0.77** — the key Phase-1↔Phase-2 lesson.
 
 Leakage guard, determinism, subtype coverage, amount signs, gold validity, and the weak labeler are
 enforced by `tests/test_{gazetteer,synthesize,splits,build,gold,weak_label}.py` (31 tests).
