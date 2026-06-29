@@ -1,6 +1,7 @@
 # 05 — Knowledge Distillation (teacher → tiny student)
 
-**Status:** 🚧 design spec (awaiting review → then build) · **Phase:** 5
+**Status:** 🚧 build — code complete + CPU-smoke-verified; awaiting the Colab distillation run ·
+**Phase:** 5
 **Depends on:** [03-finetuning](03-finetuning.md) (the DistilBERT teacher), [02-baselines](02-baselines.md)
 (the harness) · **Used by:** [06-optimization](06-optimization.md) (quantize the student),
 [07-serving](07-serving.md)

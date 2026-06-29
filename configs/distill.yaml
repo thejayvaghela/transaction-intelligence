@@ -1,0 +1,17 @@
+# Phase 5 distillation config. See docs/05-distillation.md.
+
+student_id: prajjwal1/bert-tiny      # 2-layer / 128-hidden / ~4.4M params (~15x smaller than teacher)
+teacher_dir: models/teacher          # the DistilBERT teacher from Phase 3
+
+max_length: 48
+temperature: 3.0                     # distillation temperature (softens teacher logits)
+alpha: 0.5                           # weight on the hard-label CE term; (1-alpha) on the soft KL term
+
+learning_rate: 5.0e-5
+batch_size: 64
+epochs: 6                            # tiny model -> more epochs to converge
+weight_decay: 0.01
+warmup_ratio: 0.1
+seed: 20260626
+output_dir: models/student
+fp16: true

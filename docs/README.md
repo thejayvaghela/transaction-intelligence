@@ -18,7 +18,7 @@ Cross-reference, don't duplicate — link to other docs with relative links. The
 | 02 | [02-baselines.md](02-baselines.md) | TF-IDF + logistic regression baseline + the **reusable eval harness** | ✅ done |
 | 03 | [03-finetuning.md](03-finetuning.md) | Fine-tune DistilBERT / DeBERTa-v3 teacher; MLflow tracking | ✅ done (teacher = DistilBERT) |
 | 04 | 04-ner.md | *(Optional, deferred)* token-level merchant/location NER | ⬜ deferred |
-| 05 | [05-distillation.md](05-distillation.md) | Distill teacher → tiny student | 🚧 design |
+| 05 | [05-distillation.md](05-distillation.md) | Distill teacher → tiny student | 🚧 build (awaiting Colab run) |
 | 06 | 06-optimization.md | ONNX export + INT8 quantization + accuracy/latency Pareto report | ⬜ planned |
 | 07 | 07-serving.md | FastAPI + ONNX service (batch + online paths) | ⬜ planned |
 | 08 | 08-frontend.md | Lean Next.js demo page | ⬜ planned |

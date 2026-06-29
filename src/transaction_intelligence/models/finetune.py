@@ -121,6 +121,28 @@ class TransformerPredictor:
     def predict(self, descriptors) -> list[str]:
         return [tx.SUBTYPES[i] for i in self.predict_proba(descriptors).argmax(axis=1)]
 
+    @torch.no_grad()
+    def predict_logits(self, descriptors) -> np.ndarray:
+        """Raw model logits (no temperature, no softmax), aligned to tx.SUBTYPES.
+
+        Used as the teacher's soft targets for distillation (see distill.py).
+        """
+        descriptors = list(descriptors)
+        if not descriptors:
+            return np.zeros((0, tx.NUM_SUBTYPES))
+        out = []
+        for i in range(0, len(descriptors), self.batch_size):
+            batch = descriptors[i : i + self.batch_size]
+            enc = self.tokenizer(
+                batch,
+                truncation=True,
+                padding=True,
+                max_length=self.max_length,
+                return_tensors="pt",
+            ).to(self.device)
+            out.append(self.model(**enc).logits.cpu().numpy())
+        return np.vstack(out)
+
     def save(self, path) -> Path:
         path = Path(path)
         path.mkdir(parents=True, exist_ok=True)
