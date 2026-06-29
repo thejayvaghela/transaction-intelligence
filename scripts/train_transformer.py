@@ -29,7 +29,7 @@ def main() -> None:
 
     model = train_transformer(train, val, cfg, smoke=args.smoke)
     out = model.save(REPO_ROOT / cfg.get("output_dir", "models/teacher"))
-    print(f"saved -> {out}\n")
+    print(f"saved -> {out}  (temperature={model.temperature:.3f})\n")
 
     tracking.setup()
     params = {"model_id": cfg["model_id"], "smoke": args.smoke}

@@ -1,7 +1,7 @@
 # 03 — Transformer Fine-Tuning (the teacher)
 
-**Status:** 🚧 build — code complete + CPU-smoke-verified; awaiting the Colab training run for
-results · **Phase:** 3
+**Status:** 🚧 build — first DistilBERT run done (≈ baseline; see §12); temperature-scaling
+calibration added; re-run + teacher choice pending · **Phase:** 3
 **Depends on:** [01-data-pipeline](01-data-pipeline.md) (data), [02-baselines](02-baselines.md)
 (the eval harness + the bar) · **Used by:** [05-distillation](05-distillation.md) (this is the
 teacher), [06-optimization](06-optimization.md), [07-serving](07-serving.md), [09-mlops](09-mlops.md)
@@ -139,9 +139,27 @@ uv run python scripts/train_transformer.py --smoke
 | text-only first | clean comparison to the baseline | fuse amount now (confounds the bar) |
 
 ## 12. Results / metrics
-_TBD after build: DistilBERT (and DeBERTa-v3-small) subtype/category macro-F1 on test + gold vs the
-baseline 0.77/0.85; ECE pre/post temperature scaling; accuracy@coverage; training curves; per-class
-gains over the baseline; chosen teacher._
+
+**DistilBERT — first run (4 epochs, Colab T4, ~2 min):**
+
+| set | model | subtype macro-F1 | category macro-F1 | ECE |
+|---|---|---|---|---|
+| test (n=4720) | baseline | 0.54 | 0.68 | — |
+| test | DistilBERT | **0.569** | **0.705** | 0.266 |
+| gold (n=120) | baseline | **0.77** | **0.85** | — |
+| gold | DistilBERT | 0.707 | 0.831 | 0.213 |
+
+**Read:** essentially a tie. DistilBERT edges the baseline on the large/reliable `test` set but
+trails on the 120-row `gold` (small-sample noise). The model overfits (train loss → 0.02, val
+macro-F1 plateaus ~0.58) and is **badly miscalibrated (ECE 0.21–0.27)**.
+
+**Lesson:** on short, keyword-driven descriptors, char n-grams already capture most of the signal,
+so a 268 MB transformer barely outperforms a tiny TF-IDF model. Bigger ≠ better here — a real,
+defensible benchmark finding (and a strong argument for the cheap-inference thesis).
+
+**Added since:** temperature scaling (fit on val) to fix calibration — re-run pending to record the
+post-calibration ECE. Open: try DeBERTa-v3-small as a stronger teacher candidate, then choose the
+teacher for [05-distillation](05-distillation.md).
 
 ## 13. Gotchas (to confirm after build)
 - **Label-order contract** — build `id2label` from `tx.SUBTYPES`; a mismatch silently scrambles

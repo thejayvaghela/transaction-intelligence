@@ -7,6 +7,7 @@ subtypes (category derived). ``id2label`` is built from ``tx.SUBTYPES`` so outpu
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import numpy as np
@@ -82,12 +83,21 @@ class _WeightedTrainer(Trainer):
 class TransformerPredictor:
     """Fine-tuned transformer adapted to the harness Predictor interface (subtype-level)."""
 
-    def __init__(self, model, tokenizer, max_length: int = 48, batch_size: int = 64, device=None):
+    def __init__(
+        self,
+        model,
+        tokenizer,
+        max_length: int = 48,
+        batch_size: int = 64,
+        device=None,
+        temperature: float = 1.0,
+    ):
         self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
         self.model = model.to(self.device).eval()
         self.tokenizer = tokenizer
         self.max_length = max_length
         self.batch_size = batch_size
+        self.temperature = temperature  # post-hoc calibration scalar (1.0 = none)
 
     @torch.no_grad()
     def predict_proba(self, descriptors) -> np.ndarray:
@@ -104,7 +114,7 @@ class TransformerPredictor:
                 max_length=self.max_length,
                 return_tensors="pt",
             ).to(self.device)
-            logits = self.model(**enc).logits
+            logits = self.model(**enc).logits / self.temperature  # temperature scaling
             out.append(torch.softmax(logits, dim=1).cpu().numpy())
         return np.vstack(out)  # (n, NUM_SUBTYPES), aligned to tx.SUBTYPES via id2label
 
@@ -116,13 +126,55 @@ class TransformerPredictor:
         path.mkdir(parents=True, exist_ok=True)
         self.model.save_pretrained(path)
         self.tokenizer.save_pretrained(path)
+        (path / "temperature.json").write_text(json.dumps({"temperature": self.temperature}))
         return path
 
     @classmethod
     def load(cls, path, max_length: int = 48) -> TransformerPredictor:
+        path = Path(path)
         tok = AutoTokenizer.from_pretrained(path)
         model = AutoModelForSequenceClassification.from_pretrained(path)
-        return cls(model, tok, max_length=max_length)
+        tpath = path / "temperature.json"
+        temperature = json.loads(tpath.read_text())["temperature"] if tpath.exists() else 1.0
+        return cls(model, tok, max_length=max_length, temperature=temperature)
+
+
+@torch.no_grad()
+def _collect_logits(model, df, tokenizer, max_length, device, batch_size=64):
+    descs = df["descriptor"].tolist()
+    labels = torch.tensor([tx.SUBTYPE_TO_ID[s] for s in df["subtype"]])
+    chunks = []
+    for i in range(0, len(descs), batch_size):
+        enc = tokenizer(
+            descs[i : i + batch_size],
+            truncation=True,
+            padding=True,
+            max_length=max_length,
+            return_tensors="pt",
+        ).to(device)
+        chunks.append(model(**enc).logits.detach().cpu())
+    return torch.cat(chunks), labels
+
+
+def fit_temperature(model, val_df, tokenizer, max_length, device) -> float:
+    """Fit a single temperature T on val by minimizing NLL of softmax(logits / T).
+
+    Optimizes log(T) for positivity. Lowers ECE (over-confident logits get softened) without
+    changing predictions (dividing by a positive scalar preserves argmax).
+    """
+    logits, labels = _collect_logits(model, val_df, tokenizer, max_length, device)
+    log_t = torch.zeros(1, requires_grad=True)
+    opt = torch.optim.LBFGS([log_t], lr=0.1, max_iter=60)
+    nll = torch.nn.CrossEntropyLoss()
+
+    def closure():
+        opt.zero_grad()
+        loss = nll(logits / log_t.exp(), labels)
+        loss.backward()
+        return loss
+
+    opt.step(closure)
+    return float(log_t.exp().item())
 
 
 def train_transformer(
@@ -171,4 +223,7 @@ def train_transformer(
         class_weights=_class_weights(train_df),
     )
     trainer.train()
-    return TransformerPredictor(model, tokenizer, max_length=max_length)
+
+    predictor = TransformerPredictor(model, tokenizer, max_length=max_length)
+    predictor.temperature = fit_temperature(model, val_df, tokenizer, max_length, predictor.device)
+    return predictor
