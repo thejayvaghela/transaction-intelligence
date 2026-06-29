@@ -192,6 +192,7 @@ def train_transformer(
         label2id=dict(tx.SUBTYPE_TO_ID),
         ignore_mismatched_sizes=True,
     )
+    model = model.float()  # some checkpoints (e.g. DeBERTa-v3) load as fp16; force fp32 params
 
     args = TrainingArguments(
         output_dir=config.get("output_dir", "models/teacher"),
