@@ -19,8 +19,15 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--smoke", action="store_true", help="tiny CPU run to verify the pipeline")
     ap.add_argument("--config", default=str(REPO_ROOT / "configs" / "finetune.yaml"))
+    ap.add_argument("--model", default=None, help="override model_id (e.g. deberta-v3-small)")
+    ap.add_argument("--output", default=None, help="override output dir")
     args = ap.parse_args()
     cfg = yaml.safe_load(Path(args.config).read_text())
+    if args.model:
+        cfg["model_id"] = args.model
+    if args.output:
+        cfg["output_dir"] = args.output
+    tag = Path(cfg.get("output_dir", "models/teacher")).name
 
     train, val = load_split("train"), load_split("val")
     if args.smoke:
@@ -36,9 +43,10 @@ def main() -> None:
     for k in ("learning_rate", "batch_size", "epochs", "max_length", "seed"):
         if k in cfg:
             params[k] = cfg[k]
-    with tracking.run(params=params, run_name="teacher-smoke" if args.smoke else "teacher"):
+    run_name = f"{tag}-smoke" if args.smoke else tag
+    with tracking.run(params=params, run_name=run_name):
         for name, df in [("test", load_split("test")), ("gold", load_gold())]:
-            res = evaluate(model, df, f"teacher/{name}")
+            res = evaluate(model, df, f"{tag}/{name}")
             print(res.summary())
             tracking.log_eval(res, name)
 
