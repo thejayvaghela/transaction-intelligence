@@ -70,4 +70,15 @@ where the term first appears so you can jump to the full explanation.
 - **MLflow run / experiment** — a logged training run (params + metrics + artifacts) grouped under a
   named experiment. _(see [03-finetuning](03-finetuning.md))_
 
-_More to come as we go: distillation temperature, soft labels, INT8 quantization, ONNX, drift / PSI, ..._
+- **Knowledge distillation** — training a small "student" model to mimic a larger "teacher", so the
+  student inherits the teacher's behavior at a fraction of the size. _(see [05-distillation](05-distillation.md))_
+- **Soft targets / dark knowledge** — the teacher's full probability distribution (not just the top
+  label); the relative probabilities encode learned class-similarity structure. _(see [05-distillation](05-distillation.md))_
+- **Distillation temperature** — a `T` that softens the teacher's logits (`softmax(z/T)`) to expose
+  that inter-class structure for the student to learn. _(see [05-distillation](05-distillation.md))_
+- **KD loss** — distillation objective: `α·CE(hard) + (1−α)·T²·KL(soft student ‖ soft teacher)`.
+  _(see [05-distillation](05-distillation.md))_
+- **Distillation lift** — the macro-F1 gap between a distilled student and the same model trained
+  from scratch on hard labels; isolates distillation's value. _(see [05-distillation](05-distillation.md))_
+
+_More to come as we go: INT8 quantization, ONNX, latency/throughput, drift / PSI, ..._

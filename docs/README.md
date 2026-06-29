@@ -18,7 +18,7 @@ Cross-reference, don't duplicate — link to other docs with relative links. The
 | 02 | [02-baselines.md](02-baselines.md) | TF-IDF + logistic regression baseline + the **reusable eval harness** | ✅ done |
 | 03 | [03-finetuning.md](03-finetuning.md) | Fine-tune DistilBERT / DeBERTa-v3 teacher; MLflow tracking | ✅ done (teacher = DistilBERT) |
 | 04 | 04-ner.md | *(Optional, deferred)* token-level merchant/location NER | ⬜ deferred |
-| 05 | 05-distillation.md | Distill teacher → tiny student | 🚧 next |
+| 05 | [05-distillation.md](05-distillation.md) | Distill teacher → tiny student | 🚧 design |
 | 06 | 06-optimization.md | ONNX export + INT8 quantization + accuracy/latency Pareto report | ⬜ planned |
 | 07 | 07-serving.md | FastAPI + ONNX service (batch + online paths) | ⬜ planned |
 | 08 | 08-frontend.md | Lean Next.js demo page | ⬜ planned |
@@ -46,3 +46,4 @@ Cross-reference, don't duplicate — link to other docs with relative links. The
 - [decisions/0004-synthetic-first-data.md](decisions/0004-synthetic-first-data.md) — synthetic-first data generation, real data as reality check
 - [decisions/0005-eval-protocol.md](decisions/0005-eval-protocol.md) — one shared eval harness, macro-F1 on test + gold, calibration + coverage
 - [decisions/0006-finetuning-approach.md](decisions/0006-finetuning-approach.md) — DistilBERT, single subtype head, MLflow from Phase 3
+- [decisions/0007-distillation.md](decisions/0007-distillation.md) — bert-tiny student, KD loss, distilled-vs-scratch ablation
