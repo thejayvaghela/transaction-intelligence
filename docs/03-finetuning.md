@@ -1,7 +1,7 @@
 # 03 — Transformer Fine-Tuning (the teacher)
 
-**Status:** 🚧 build — first DistilBERT run done (≈ baseline; see §12); temperature-scaling
-calibration added; re-run + teacher choice pending · **Phase:** 3
+**Status:** ✅ done — DistilBERT + DeBERTa-v3 both trained & evaluated; both ≈ the TF-IDF baseline
+(n-gram-friendly task). **Teacher = DistilBERT** (see §12). · **Phase:** 3
 **Depends on:** [01-data-pipeline](01-data-pipeline.md) (data), [02-baselines](02-baselines.md)
 (the eval harness + the bar) · **Used by:** [05-distillation](05-distillation.md) (this is the
 teacher), [06-optimization](06-optimization.md), [07-serving](07-serving.md), [09-mlops](09-mlops.md)
@@ -140,28 +140,32 @@ uv run python scripts/train_transformer.py --smoke
 
 ## 12. Results / metrics
 
-**DistilBERT (4 epochs, Colab T4, ~2 min; with temperature scaling, T=1.63):**
+Final three-way comparison (test n=4720 is the reliable set; gold n=120 is noisy). Transformers
+trained 4 epochs on a Colab T4, with temperature-scaling calibration.
 
-| set | model | subtype macro-F1 | category macro-F1 | ECE |
-|---|---|---|---|---|
-| test (n=4720) | baseline | 0.54 | 0.68 | — |
-| test | DistilBERT | **0.58** | **0.71** | 0.097 |
-| gold (n=120) | baseline | **0.77** | **0.85** | — |
-| gold | DistilBERT | 0.72 | 0.84 | 0.120 |
-| — | DeBERTa-v3-small | _pending (fp32 re-run)_ | | |
+| model | test subtype | test category | gold subtype | gold category | ECE (test) |
+|---|---|---|---|---|---|
+| TF-IDF + LogReg (baseline) | 0.54 | 0.68 | **0.77** | 0.85 | — |
+| **DistilBERT (teacher)** | 0.56 | **0.71** | 0.67–0.75\* | **0.86** | ~0.10 |
+| DeBERTa-v3-small | 0.56 | 0.70 | 0.73 | 0.85 | ~0.12 |
 
-**Read:** essentially a tie on accuracy. DistilBERT edges the baseline on the large/reliable `test`
-set but trails on the 120-row `gold` (small-sample noise). **Temperature scaling cut ECE ~2.7×**
-(test 0.266 → 0.097) with accuracy unchanged — the confidence is now trustworthy (needed for the
-abstention design).
+\* DistilBERT gold swings run-to-run (n=120 + which val epoch `load_best` selects); test is stable.
 
-**Lesson:** on short, keyword-driven descriptors, char n-grams already capture most of the signal,
-so a 268 MB transformer barely outperforms a tiny TF-IDF model. Bigger ≠ better here — a real,
-defensible benchmark finding (and a strong argument for the cheap-inference thesis).
+**Verdict:** all three essentially **tie**. Two transformer families both fail to clearly beat a
+tiny TF-IDF model → this task is genuinely **n-gram-friendly**: descriptors are short, keyword-driven
+token-bags with little context, exactly where linear models on char/word n-grams already capture the
+signal. **DeBERTa-v3 gave no gain over DistilBERT** (equal accuracy, ~3× slower to train).
 
-**Gotcha logged:** DeBERTa-v3 + fp16 crashes (`Attempting to unscale FP16 gradients`); train it in
-fp32 (`--no-fp16`). DeBERTa numbers + final teacher choice for [05-distillation](05-distillation.md)
-pending that re-run.
+**Teacher chosen: DistilBERT** — same accuracy as DeBERTa but smaller, faster to serve, and a natural
+distillation source. Temperature scaling gives trustworthy confidence (ECE 0.27 → ~0.10).
+
+**Honest takeaway (a feature, not a bug):** a rigorous benchmark across rules → TF-IDF → transformer
+shows a simple model suffices here — a more mature result than "big model wins." We carry DistilBERT
+forward to [05-distillation](05-distillation.md) to learn the compression pipeline and complete the
+accuracy/latency/cost Pareto (incl. a hosted-LLM baseline) — the real portfolio deliverable.
+
+**Gotchas logged:** DeBERTa-v3 + fp16 crashes (`Attempting to unscale FP16 gradients`) → train fp32
+(`--no-fp16`); DeBERTa-v3 checkpoint loads as fp16 → `model.float()` after load.
 
 ## 13. Gotchas (to confirm after build)
 - **Label-order contract** — build `id2label` from `tx.SUBTYPES`; a mismatch silently scrambles
