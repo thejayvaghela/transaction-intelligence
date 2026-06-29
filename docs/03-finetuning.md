@@ -140,26 +140,28 @@ uv run python scripts/train_transformer.py --smoke
 
 ## 12. Results / metrics
 
-**DistilBERT — first run (4 epochs, Colab T4, ~2 min):**
+**DistilBERT (4 epochs, Colab T4, ~2 min; with temperature scaling, T=1.63):**
 
 | set | model | subtype macro-F1 | category macro-F1 | ECE |
 |---|---|---|---|---|
 | test (n=4720) | baseline | 0.54 | 0.68 | — |
-| test | DistilBERT | **0.569** | **0.705** | 0.266 |
+| test | DistilBERT | **0.58** | **0.71** | 0.097 |
 | gold (n=120) | baseline | **0.77** | **0.85** | — |
-| gold | DistilBERT | 0.707 | 0.831 | 0.213 |
+| gold | DistilBERT | 0.72 | 0.84 | 0.120 |
+| — | DeBERTa-v3-small | _pending (fp32 re-run)_ | | |
 
-**Read:** essentially a tie. DistilBERT edges the baseline on the large/reliable `test` set but
-trails on the 120-row `gold` (small-sample noise). The model overfits (train loss → 0.02, val
-macro-F1 plateaus ~0.58) and is **badly miscalibrated (ECE 0.21–0.27)**.
+**Read:** essentially a tie on accuracy. DistilBERT edges the baseline on the large/reliable `test`
+set but trails on the 120-row `gold` (small-sample noise). **Temperature scaling cut ECE ~2.7×**
+(test 0.266 → 0.097) with accuracy unchanged — the confidence is now trustworthy (needed for the
+abstention design).
 
 **Lesson:** on short, keyword-driven descriptors, char n-grams already capture most of the signal,
 so a 268 MB transformer barely outperforms a tiny TF-IDF model. Bigger ≠ better here — a real,
 defensible benchmark finding (and a strong argument for the cheap-inference thesis).
 
-**Added since:** temperature scaling (fit on val) to fix calibration — re-run pending to record the
-post-calibration ECE. Open: try DeBERTa-v3-small as a stronger teacher candidate, then choose the
-teacher for [05-distillation](05-distillation.md).
+**Gotcha logged:** DeBERTa-v3 + fp16 crashes (`Attempting to unscale FP16 gradients`); train it in
+fp32 (`--no-fp16`). DeBERTa numbers + final teacher choice for [05-distillation](05-distillation.md)
+pending that re-run.
 
 ## 13. Gotchas (to confirm after build)
 - **Label-order contract** — build `id2label` from `tx.SUBTYPES`; a mismatch silently scrambles

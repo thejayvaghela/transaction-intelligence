@@ -21,12 +21,15 @@ def main() -> None:
     ap.add_argument("--config", default=str(REPO_ROOT / "configs" / "finetune.yaml"))
     ap.add_argument("--model", default=None, help="override model_id (e.g. deberta-v3-small)")
     ap.add_argument("--output", default=None, help="override output dir")
+    ap.add_argument("--no-fp16", dest="fp16", action="store_false", help="disable fp16")
     args = ap.parse_args()
     cfg = yaml.safe_load(Path(args.config).read_text())
     if args.model:
         cfg["model_id"] = args.model
     if args.output:
         cfg["output_dir"] = args.output
+    if not args.fp16:
+        cfg["fp16"] = False
     tag = Path(cfg.get("output_dir", "models/teacher")).name
 
     train, val = load_split("train"), load_split("val")

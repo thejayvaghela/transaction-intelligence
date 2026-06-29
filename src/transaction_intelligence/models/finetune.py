@@ -210,7 +210,7 @@ def train_transformer(
         max_steps=2 if smoke else -1,
         logging_steps=50,
         report_to=[],
-        fp16=torch.cuda.is_available(),
+        fp16=config.get("fp16", True) and torch.cuda.is_available(),  # DeBERTa-v3 needs fp16 off
     )
 
     trainer = _WeightedTrainer(
